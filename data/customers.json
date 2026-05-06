@@ -1,0 +1,18 @@
+[
+  {
+    "id": "C001",
+    "name": "A. N S  TEXTILES",
+    "address": "410,  G.R.Nagar , Salem -636201",
+    "gstin": "33AAGFA7322M1ZH",
+    "state": "Tamil Nadu",
+    "stateCode": "33"
+  },
+  {
+    "id": "C002",
+    "name": "Kerala Fabrics",
+    "address": "45, High Rd, Cochin",
+    "gstin": "32BBBBB0000B1Z6",
+    "state": "Kerala",
+    "stateCode": "32"
+  }
+]

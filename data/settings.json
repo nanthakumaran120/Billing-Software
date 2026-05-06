@@ -1,0 +1,12 @@
+{
+  "nextInvoiceNo": 14,
+  "currentFinancialYear": "25-26",
+  "company": {
+    "name": "Your Company Name",
+    "address": "Your Company Address",
+    "gstin": "Your GSTIN",
+    "state": "Tamil Nadu",
+    "stateCode": "33"
+  },
+  "financialYear": "25-26"
+}

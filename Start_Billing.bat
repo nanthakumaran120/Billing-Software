@@ -1,0 +1,9 @@
+@echo off
+cd /d "%~dp0"
+echo Stopping any running servers...
+taskkill /F /IM node.exe >nul 2>&1
+echo Starting Srinivasa Dyeing Billing Software...
+echo Please wait while the application loads...
+start http://localhost:3005
+npm start
+pause

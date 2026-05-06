@@ -1,0 +1,1037 @@
+[
+  {
+    "id": "1774015402037",
+    "invoiceDetails": {
+      "invoiceNo": 1,
+      "date": "2026-03-20"
+    },
+    "customer": {
+      "id": "C002",
+      "name": "Kerala Fabrics",
+      "address": "45, High Rd, Cochin",
+      "gstin": "32BBBBB0000B1Z6",
+      "state": "Kerala",
+      "stateCode": "32"
+    },
+    "items": [
+      {
+        "description": "Plain Towels 30x60",
+        "hsn": "6304",
+        "qty": "10",
+        "rate": 60,
+        "per": "Nos",
+        "amount": "600.00",
+        "id": "P001"
+      }
+    ],
+    "createdAt": "2026-03-20T14:03:22.037Z"
+  },
+  {
+    "id": "1774015977655",
+    "invoiceDetails": {
+      "invoiceNo": 1,
+      "date": "2026-03-20"
+    },
+    "customer": {
+      "id": "C001",
+      "name": "A. N S  TEXTILES",
+      "address": "410,  G.R.Nagar , Salem -636201",
+      "gstin": "33AAGFA7322M1ZH",
+      "state": "Tamil Nadu",
+      "stateCode": "33"
+    },
+    "items": [
+      {
+        "description": "Plain Towels 30x60",
+        "hsn": "6304",
+        "qty": "10",
+        "rate": 60,
+        "per": "Nos",
+        "amount": "600.00",
+        "id": "P001"
+      }
+    ],
+    "createdAt": "2026-03-20T14:12:57.655Z"
+  },
+  {
+    "id": "1774016285337",
+    "invoiceDetails": {
+      "invoiceNo": 2,
+      "date": "2026-03-20"
+    },
+    "customer": {
+      "id": "C001",
+      "name": "A. N S  TEXTILES",
+      "address": "410,  G.R.Nagar , Salem -636201",
+      "gstin": "33AAGFA7322M1ZH",
+      "state": "Tamil Nadu",
+      "stateCode": "33"
+    },
+    "items": [
+      {
+        "description": "Plain Towels 30x60",
+        "hsn": "6304",
+        "qty": "10",
+        "rate": 60,
+        "per": "Nos",
+        "amount": "600.00",
+        "id": "P001"
+      }
+    ],
+    "createdAt": "2026-03-20T14:18:05.337Z"
+  },
+  {
+    "id": "1774016341578",
+    "invoiceDetails": {
+      "invoiceNo": 3,
+      "date": "2026-03-20"
+    },
+    "customer": {
+      "id": "C002",
+      "name": "Kerala Fabrics",
+      "address": "45, High Rd, Cochin",
+      "gstin": "32BBBBB0000B1Z6",
+      "state": "Kerala",
+      "stateCode": "32"
+    },
+    "items": [
+      {
+        "description": "Plain Towels 30x60",
+        "hsn": "6304",
+        "qty": "1",
+        "rate": 60,
+        "per": "Nos",
+        "amount": "60.00",
+        "id": "P001"
+      }
+    ],
+    "createdAt": "2026-03-20T14:19:01.578Z"
+  },
+  {
+    "id": "1774018797450",
+    "invoiceDetails": {
+      "invoiceNo": 4,
+      "date": "2026-03-20"
+    },
+    "customer": {
+      "id": "C001",
+      "name": "A. N S  TEXTILES",
+      "address": "410,  G.R.Nagar , Salem -636201",
+      "gstin": "33AAGFA7322M1ZH",
+      "state": "Tamil Nadu",
+      "stateCode": "33"
+    },
+    "items": [
+      {
+        "description": "Plain Towels 30x60",
+        "hsn": "6304",
+        "qty": "10",
+        "rate": 60,
+        "per": "Nos",
+        "amount": "600.00",
+        "id": "P001"
+      }
+    ],
+    "createdAt": "2026-03-20T14:59:57.450Z"
+  },
+  {
+    "id": "1774018884892",
+    "invoiceDetails": {
+      "invoiceNo": 5,
+      "date": "2026-03-20"
+    },
+    "customer": {
+      "id": "C001",
+      "name": "A. N S  TEXTILES",
+      "address": "410,  G.R.Nagar , Salem -636201",
+      "gstin": "33AAGFA7322M1ZH",
+      "state": "Tamil Nadu",
+      "stateCode": "33"
+    },
+    "items": [
+      {
+        "description": "Plain Towels 30x60",
+        "hsn": "6304",
+        "qty": "10",
+        "rate": 60,
+        "per": "Nos",
+        "amount": "600.00",
+        "id": "P001"
+      }
+    ],
+    "createdAt": "2026-03-20T15:01:24.892Z"
+  },
+  {
+    "id": "1774158522980",
+    "invoiceDetails": {
+      "invoiceNo": 6,
+      "date": "2026-03-22"
+    },
+    "customer": {
+      "id": "C001",
+      "name": "A. N S  TEXTILES",
+      "address": "410,  G.R.Nagar , Salem -636201",
+      "gstin": "33AAGFA7322M1ZH",
+      "state": "Tamil Nadu",
+      "stateCode": "33"
+    },
+    "items": [
+      {
+        "description": "Plain Towels 30x60",
+        "hsn": "6304",
+        "qty": "10",
+        "rate": 60,
+        "per": "Nos",
+        "amount": "600.00",
+        "id": "P001"
+      }
+    ],
+    "createdAt": "2026-03-22T05:48:42.980Z"
+  },
+  {
+    "id": "1774159074850",
+    "invoiceDetails": {
+      "invoiceNo": 7,
+      "date": "2026-03-22"
+    },
+    "customer": {
+      "id": "C001",
+      "name": "A. N S  TEXTILES",
+      "address": "410,  G.R.Nagar , Salem -636201",
+      "gstin": "33AAGFA7322M1ZH",
+      "state": "Tamil Nadu",
+      "stateCode": "33"
+    },
+    "items": [
+      {
+        "description": "Plain Towels 30x60",
+        "hsn": "6304",
+        "qty": "10",
+        "rate": 60,
+        "per": "Nos",
+        "amount": "600.00",
+        "id": "P001"
+      }
+    ],
+    "createdAt": "2026-03-22T05:57:54.850Z"
+  },
+  {
+    "id": "1774159473967",
+    "invoiceDetails": {
+      "invoiceNo": 8,
+      "date": "2026-03-22"
+    },
+    "customer": {
+      "id": "C001",
+      "name": "A. N S  TEXTILES",
+      "address": "410,  G.R.Nagar , Salem -636201",
+      "gstin": "33AAGFA7322M1ZH",
+      "state": "Tamil Nadu",
+      "stateCode": "33"
+    },
+    "items": [
+      {
+        "description": "Cool White Plain 30x60",
+        "hsn": "6304",
+        "qty": "1",
+        "rate": 63.5,
+        "per": "Nos",
+        "amount": "63.50",
+        "id": "P003"
+      }
+    ],
+    "createdAt": "2026-03-22T06:04:33.967Z"
+  },
+  {
+    "id": "1774159517433",
+    "invoiceDetails": {
+      "invoiceNo": "1",
+      "date": "2026-03-22"
+    },
+    "customer": {
+      "id": "C001",
+      "name": "A. N S  TEXTILES",
+      "address": "410,  G.R.Nagar , Salem -636201",
+      "gstin": "33AAGFA7322M1ZH",
+      "state": "Tamil Nadu",
+      "stateCode": "33"
+    },
+    "items": [
+      {
+        "description": "Plain Towels 30x60",
+        "hsn": "6304",
+        "qty": "1",
+        "rate": 60,
+        "per": "Nos",
+        "amount": "60.00",
+        "id": "P001"
+      }
+    ],
+    "createdAt": "2026-03-22T06:05:17.433Z"
+  },
+  {
+    "id": "1774159936439",
+    "invoiceDetails": {
+      "invoiceNo": 2,
+      "date": "2026-03-22"
+    },
+    "customer": {
+      "id": "C001",
+      "name": "A. N S  TEXTILES",
+      "address": "410,  G.R.Nagar , Salem -636201",
+      "gstin": "33AAGFA7322M1ZH",
+      "state": "Tamil Nadu",
+      "stateCode": "33"
+    },
+    "items": [
+      {
+        "description": "Plain Towels 30x60",
+        "hsn": "6304",
+        "qty": "1",
+        "rate": 60,
+        "per": "Nos",
+        "amount": "60.00",
+        "id": "P001"
+      }
+    ],
+    "createdAt": "2026-03-22T06:12:16.439Z"
+  },
+  {
+    "id": "1774160395833",
+    "invoiceDetails": {
+      "invoiceNo": 3,
+      "date": "2026-03-22"
+    },
+    "customer": {
+      "id": "C001",
+      "name": "A. N S  TEXTILES",
+      "address": "410,  G.R.Nagar , Salem -636201",
+      "gstin": "33AAGFA7322M1ZH",
+      "state": "Tamil Nadu",
+      "stateCode": "33"
+    },
+    "items": [
+      {
+        "description": "Plain Towels 30x60",
+        "hsn": "6304",
+        "qty": "1",
+        "rate": 60,
+        "per": "Nos",
+        "amount": "60.00",
+        "id": "P001"
+      }
+    ],
+    "createdAt": "2026-03-22T06:19:55.833Z"
+  },
+  {
+    "id": "1774160799389",
+    "invoiceDetails": {
+      "invoiceNo": 4,
+      "date": "2026-03-22"
+    },
+    "customer": {
+      "id": "C001",
+      "name": "A. N S  TEXTILES",
+      "address": "410,  G.R.Nagar , Salem -636201",
+      "gstin": "33AAGFA7322M1ZH",
+      "state": "Tamil Nadu",
+      "stateCode": "33"
+    },
+    "items": [
+      {
+        "description": "Plain Towels 30x60",
+        "hsn": "6304",
+        "qty": "1",
+        "rate": 60,
+        "per": "Nos",
+        "amount": "60.00",
+        "id": "P001"
+      }
+    ],
+    "createdAt": "2026-03-22T06:26:39.389Z"
+  },
+  {
+    "id": "1774326727089",
+    "invoiceDetails": {
+      "invoiceNo": "1",
+      "date": "2026-03-24"
+    },
+    "customer": {
+      "id": "C001",
+      "name": "A. N S  TEXTILES",
+      "address": "410,  G.R.Nagar , Salem -636201",
+      "gstin": "33AAGFA7322M1ZH",
+      "state": "Tamil Nadu",
+      "stateCode": "33"
+    },
+    "items": [
+      {
+        "description": "Plain Towels 30x60",
+        "hsn": "6304",
+        "qty": "1",
+        "rate": 60,
+        "per": "Nos",
+        "amount": "60.00",
+        "id": "P001"
+      }
+    ],
+    "createdAt": "2026-03-24T04:32:07.089Z"
+  },
+  {
+    "id": "1774329652427",
+    "invoiceDetails": {
+      "invoiceNo": 2,
+      "date": "2026-03-24"
+    },
+    "customer": {
+      "id": "C002",
+      "name": "Kerala Fabrics",
+      "address": "45, High Rd, Cochin",
+      "gstin": "32BBBBB0000B1Z6",
+      "state": "Kerala",
+      "stateCode": "32"
+    },
+    "items": [
+      {
+        "description": "Plain Towels 30x60",
+        "hsn": "6304",
+        "qty": "10",
+        "rate": "60.25",
+        "per": "Nos",
+        "amount": "602.50",
+        "id": "P001"
+      }
+    ],
+    "createdAt": "2026-03-24T05:20:52.428Z"
+  },
+  {
+    "id": "1774329741928",
+    "invoiceDetails": {
+      "invoiceNo": 3,
+      "date": "2026-03-24"
+    },
+    "customer": {
+      "id": "C001",
+      "name": "A. N S  TEXTILES",
+      "address": "410,  G.R.Nagar , Salem -636201",
+      "gstin": "33AAGFA7322M1ZH",
+      "state": "Tamil Nadu",
+      "stateCode": "33"
+    },
+    "items": [
+      {
+        "description": "Plain Towels 30x60",
+        "hsn": "6304",
+        "qty": "10",
+        "rate": 60,
+        "per": "Nos",
+        "amount": "600.00",
+        "id": "P001"
+      }
+    ],
+    "createdAt": "2026-03-24T05:22:21.928Z"
+  },
+  {
+    "id": "1774329986067",
+    "invoiceDetails": {
+      "invoiceNo": 4,
+      "date": "2026-03-24"
+    },
+    "customer": {
+      "id": "C001",
+      "name": "A. N S  TEXTILES",
+      "address": "410,  G.R.Nagar , Salem -636201",
+      "gstin": "33AAGFA7322M1ZH",
+      "state": "Tamil Nadu",
+      "stateCode": "33"
+    },
+    "items": [
+      {
+        "description": "Plain Towels 30x60",
+        "hsn": "6304",
+        "qty": "10",
+        "rate": 60,
+        "per": "Nos",
+        "amount": "600.00",
+        "id": "P001"
+      }
+    ],
+    "createdAt": "2026-03-24T05:26:26.067Z"
+  },
+  {
+    "id": "1774626013255",
+    "invoiceDetails": {
+      "invoiceNo": 5,
+      "date": "2026-03-27"
+    },
+    "customer": {
+      "id": "C001",
+      "name": "A. N S  TEXTILES",
+      "address": "410,  G.R.Nagar , Salem -636201",
+      "gstin": "33AAGFA7322M1ZH",
+      "state": "Tamil Nadu",
+      "stateCode": "33"
+    },
+    "items": [
+      {
+        "description": "Plain Towels 35x70",
+        "hsn": "6304",
+        "qty": "9",
+        "rate": 96.5,
+        "per": "Nos",
+        "amount": "868.50",
+        "id": "P002"
+      }
+    ],
+    "createdAt": "2026-03-27T15:40:13.255Z"
+  },
+  {
+    "id": "1774626333955",
+    "invoiceDetails": {
+      "invoiceNo": 6,
+      "date": "2026-03-27"
+    },
+    "customer": {
+      "id": "C001",
+      "name": "A. N S  TEXTILES",
+      "address": "410,  G.R.Nagar , Salem -636201",
+      "gstin": "33AAGFA7322M1ZH",
+      "state": "Tamil Nadu",
+      "stateCode": "33"
+    },
+    "items": [
+      {
+        "description": "Plain Towels 30x60",
+        "hsn": "6304",
+        "qty": "1",
+        "rate": 60,
+        "per": "Nos",
+        "amount": "60.00",
+        "id": "P001"
+      }
+    ],
+    "createdAt": "2026-03-27T15:45:33.955Z"
+  },
+  {
+    "id": "1774626489906",
+    "invoiceDetails": {
+      "invoiceNo": 7,
+      "date": "2026-03-27"
+    },
+    "customer": {
+      "id": "C002",
+      "name": "Kerala Fabrics",
+      "address": "45, High Rd, Cochin",
+      "gstin": "32BBBBB0000B1Z6",
+      "state": "Kerala",
+      "stateCode": "32"
+    },
+    "items": [
+      {
+        "description": "Plain Towels 30x60",
+        "hsn": "6304",
+        "qty": "1",
+        "rate": 60,
+        "per": "Nos",
+        "amount": "60.00",
+        "id": "P001"
+      }
+    ],
+    "createdAt": "2026-03-27T15:48:09.906Z"
+  },
+  {
+    "id": "1774626660663",
+    "invoiceDetails": {
+      "invoiceNo": 8,
+      "date": "2026-03-27"
+    },
+    "customer": {
+      "id": "C002",
+      "name": "Kerala Fabrics",
+      "address": "45, High Rd, Cochin",
+      "gstin": "32BBBBB0000B1Z6",
+      "state": "Kerala",
+      "stateCode": "32"
+    },
+    "items": [
+      {
+        "description": "Plain Towels 30x60",
+        "hsn": "6304",
+        "qty": "3",
+        "rate": 60,
+        "per": "Nos",
+        "amount": "180.00",
+        "id": "P001"
+      }
+    ],
+    "createdAt": "2026-03-27T15:51:00.663Z"
+  },
+  {
+    "id": "1774626893002",
+    "invoiceDetails": {
+      "invoiceNo": 9,
+      "date": "2026-03-27"
+    },
+    "customer": {
+      "id": "C001",
+      "name": "A. N S  TEXTILES",
+      "address": "410,  G.R.Nagar , Salem -636201",
+      "gstin": "33AAGFA7322M1ZH",
+      "state": "Tamil Nadu",
+      "stateCode": "33"
+    },
+    "items": [
+      {
+        "description": "Plain Towels 30x60",
+        "hsn": "6304",
+        "qty": "1",
+        "rate": 60,
+        "per": "Nos",
+        "amount": "60.00",
+        "id": "P001"
+      }
+    ],
+    "createdAt": "2026-03-27T15:54:53.002Z"
+  },
+  {
+    "id": "1774626919940",
+    "invoiceDetails": {
+      "invoiceNo": 10,
+      "date": "2026-03-27"
+    },
+    "customer": {
+      "id": "C001",
+      "name": "A. N S  TEXTILES",
+      "address": "410,  G.R.Nagar , Salem -636201",
+      "gstin": "33AAGFA7322M1ZH",
+      "state": "Tamil Nadu",
+      "stateCode": "33"
+    },
+    "items": [
+      {
+        "description": "Plain Towels 30x60",
+        "hsn": "6304",
+        "qty": "1",
+        "rate": 60,
+        "per": "Nos",
+        "amount": "60.00",
+        "id": "P001"
+      }
+    ],
+    "createdAt": "2026-03-27T15:55:19.940Z"
+  },
+  {
+    "id": "1774631995594",
+    "invoiceDetails": {
+      "invoiceNo": "1",
+      "date": "2026-03-27"
+    },
+    "customer": {
+      "id": "C001",
+      "name": "A. N S  TEXTILES",
+      "address": "410,  G.R.Nagar , Salem -636201",
+      "gstin": "33AAGFA7322M1ZH",
+      "state": "Tamil Nadu",
+      "stateCode": "33"
+    },
+    "items": [
+      {
+        "description": "Plain Towels 30x60",
+        "hsn": "6304",
+        "qty": "1",
+        "rate": 60,
+        "per": "Nos",
+        "amount": "60.00",
+        "id": "P001"
+      }
+    ],
+    "createdAt": "2026-03-27T17:19:55.594Z"
+  },
+  {
+    "id": "1774632544818",
+    "invoiceDetails": {
+      "invoiceNo": 2,
+      "date": "2026-03-27"
+    },
+    "customer": {
+      "id": "C001",
+      "name": "A. N S  TEXTILES",
+      "address": "410,  G.R.Nagar , Salem -636201",
+      "gstin": "33AAGFA7322M1ZH",
+      "state": "Tamil Nadu",
+      "stateCode": "33"
+    },
+    "items": [
+      {
+        "description": "Plain Towels 30x60",
+        "hsn": "6304",
+        "qty": "1",
+        "rate": 60,
+        "per": "Nos",
+        "amount": "60.00",
+        "id": "P001"
+      }
+    ],
+    "createdAt": "2026-03-27T17:29:04.818Z"
+  },
+  {
+    "id": "1774632697784",
+    "invoiceDetails": {
+      "invoiceNo": 3,
+      "date": "2026-03-27"
+    },
+    "customer": {
+      "id": "C002",
+      "name": "Kerala Fabrics",
+      "address": "45, High Rd, Cochin",
+      "gstin": "32BBBBB0000B1Z6",
+      "state": "Kerala",
+      "stateCode": "32"
+    },
+    "items": [
+      {
+        "description": "Plain Towels 30x60",
+        "hsn": "6304",
+        "qty": "1",
+        "rate": 60,
+        "per": "Nos",
+        "amount": "60.00",
+        "id": "P001"
+      }
+    ],
+    "createdAt": "2026-03-27T17:31:37.784Z"
+  },
+  {
+    "id": "1774632981047",
+    "invoiceDetails": {
+      "invoiceNo": 4,
+      "date": "2026-03-27"
+    },
+    "customer": {
+      "id": "C001",
+      "name": "A. N S  TEXTILES",
+      "address": "410,  G.R.Nagar , Salem -636201",
+      "gstin": "33AAGFA7322M1ZH",
+      "state": "Tamil Nadu",
+      "stateCode": "33"
+    },
+    "items": [
+      {
+        "description": "Plain Towels 30x60",
+        "hsn": "6304",
+        "qty": "1",
+        "rate": 60,
+        "per": "Nos",
+        "amount": "60.00",
+        "id": "P001"
+      }
+    ],
+    "createdAt": "2026-03-27T17:36:21.047Z"
+  },
+  {
+    "id": "1774633150235",
+    "invoiceDetails": {
+      "invoiceNo": 5,
+      "date": "2026-03-27"
+    },
+    "customer": {
+      "id": "C001",
+      "name": "A. N S  TEXTILES",
+      "address": "410,  G.R.Nagar , Salem -636201",
+      "gstin": "33AAGFA7322M1ZH",
+      "state": "Tamil Nadu",
+      "stateCode": "33"
+    },
+    "items": [
+      {
+        "description": "Plain Towels 30x60",
+        "hsn": "6304",
+        "qty": "1",
+        "rate": 60,
+        "per": "Nos",
+        "amount": "60.00",
+        "id": "P001"
+      }
+    ],
+    "createdAt": "2026-03-27T17:39:10.235Z"
+  },
+  {
+    "id": "1774633407578",
+    "invoiceDetails": {
+      "invoiceNo": 6,
+      "date": "2026-03-27"
+    },
+    "customer": {
+      "id": "C001",
+      "name": "A. N S  TEXTILES",
+      "address": "410,  G.R.Nagar , Salem -636201",
+      "gstin": "33AAGFA7322M1ZH",
+      "state": "Tamil Nadu",
+      "stateCode": "33"
+    },
+    "items": [
+      {
+        "description": "Plain Towels 30x60",
+        "hsn": "6304",
+        "qty": "1",
+        "rate": 60,
+        "per": "Nos",
+        "amount": "60.00",
+        "id": "P001"
+      }
+    ],
+    "createdAt": "2026-03-27T17:43:27.578Z"
+  },
+  {
+    "id": "1774633610988",
+    "invoiceDetails": {
+      "invoiceNo": 7,
+      "date": "2026-03-27"
+    },
+    "customer": {
+      "id": "C001",
+      "name": "A. N S  TEXTILES",
+      "address": "410,  G.R.Nagar , Salem -636201",
+      "gstin": "33AAGFA7322M1ZH",
+      "state": "Tamil Nadu",
+      "stateCode": "33"
+    },
+    "items": [
+      {
+        "description": "Plain Towels 30x60",
+        "hsn": "6304",
+        "qty": "10",
+        "rate": 60,
+        "per": "Nos",
+        "amount": "600.00",
+        "id": "P001"
+      }
+    ],
+    "createdAt": "2026-03-27T17:46:50.988Z"
+  },
+  {
+    "id": "1774633732576",
+    "invoiceDetails": {
+      "invoiceNo": 8,
+      "date": "2026-03-27"
+    },
+    "customer": {
+      "id": "C001",
+      "name": "A. N S  TEXTILES",
+      "address": "410,  G.R.Nagar , Salem -636201",
+      "gstin": "33AAGFA7322M1ZH",
+      "state": "Tamil Nadu",
+      "stateCode": "33"
+    },
+    "items": [
+      {
+        "description": "Plain Towels 30x60",
+        "hsn": "6304",
+        "qty": "1",
+        "rate": 60,
+        "per": "Nos",
+        "amount": "60.00",
+        "id": "P001"
+      }
+    ],
+    "createdAt": "2026-03-27T17:48:52.576Z"
+  },
+  {
+    "id": "1774633925717",
+    "invoiceDetails": {
+      "invoiceNo": 9,
+      "date": "2026-03-27"
+    },
+    "customer": {
+      "id": "C001",
+      "name": "A. N S  TEXTILES",
+      "address": "410,  G.R.Nagar , Salem -636201",
+      "gstin": "33AAGFA7322M1ZH",
+      "state": "Tamil Nadu",
+      "stateCode": "33"
+    },
+    "items": [
+      {
+        "description": "Plain Towels 35x70",
+        "hsn": "6304",
+        "qty": "1",
+        "rate": 96.5,
+        "per": "Nos",
+        "amount": "96.50",
+        "id": "P002"
+      }
+    ],
+    "createdAt": "2026-03-27T17:52:05.717Z"
+  },
+  {
+    "id": "1774634246629",
+    "invoiceDetails": {
+      "invoiceNo": 10,
+      "date": "2026-03-27"
+    },
+    "customer": {
+      "id": "C001",
+      "name": "A. N S  TEXTILES",
+      "address": "410,  G.R.Nagar , Salem -636201",
+      "gstin": "33AAGFA7322M1ZH",
+      "state": "Tamil Nadu",
+      "stateCode": "33"
+    },
+    "items": [
+      {
+        "description": "Plain Towels 30x60",
+        "hsn": "6304",
+        "qty": "20",
+        "rate": 60,
+        "per": "Nos",
+        "amount": "1200.00",
+        "id": "P001"
+      }
+    ],
+    "createdAt": "2026-03-27T17:57:26.629Z"
+  },
+  {
+    "id": "1774634556830",
+    "invoiceDetails": {
+      "invoiceNo": 11,
+      "date": "2026-03-27"
+    },
+    "customer": {
+      "id": "C001",
+      "name": "A. N S  TEXTILES",
+      "address": "410,  G.R.Nagar , Salem -636201",
+      "gstin": "33AAGFA7322M1ZH",
+      "state": "Tamil Nadu",
+      "stateCode": "33"
+    },
+    "items": [
+      {
+        "description": "Plain Towels 30x60",
+        "hsn": "6304",
+        "qty": "1",
+        "rate": 60,
+        "per": "Nos",
+        "amount": "60.00",
+        "id": "P001"
+      }
+    ],
+    "createdAt": "2026-03-27T18:02:36.830Z"
+  },
+  {
+    "id": "1774634632508",
+    "invoiceDetails": {
+      "invoiceNo": 12,
+      "date": "2026-03-27"
+    },
+    "customer": {
+      "id": "C002",
+      "name": "Kerala Fabrics",
+      "address": "45, High Rd, Cochin",
+      "gstin": "32BBBBB0000B1Z6",
+      "state": "Kerala",
+      "stateCode": "32"
+    },
+    "items": [
+      {
+        "description": "Plain Towels 35x70",
+        "hsn": "6304",
+        "qty": "1000",
+        "rate": 96.5,
+        "per": "Nos",
+        "amount": "96500.00",
+        "id": "P002"
+      },
+      {
+        "description": "Plain Towels 30x60",
+        "hsn": "6304",
+        "qty": "600",
+        "rate": 60,
+        "per": "Nos",
+        "amount": "36000.00",
+        "id": "P001"
+      },
+      {
+        "description": "Cool White Plain 30x60",
+        "hsn": "6304",
+        "qty": "1200",
+        "rate": 63.5,
+        "per": "Nos",
+        "amount": "76200.00",
+        "id": "P003"
+      }
+    ],
+    "createdAt": "2026-03-27T18:03:52.508Z"
+  },
+  {
+    "id": "1774634847072",
+    "invoiceDetails": {
+      "invoiceNo": 13,
+      "date": "2026-03-27"
+    },
+    "customer": {
+      "id": "C002",
+      "name": "Kerala Fabrics",
+      "address": "45, High Rd, Cochin",
+      "gstin": "32BBBBB0000B1Z6",
+      "state": "Kerala",
+      "stateCode": "32"
+    },
+    "items": [
+      {
+        "description": "Plain Towels 35x70",
+        "hsn": "6304",
+        "qty": "9800",
+        "rate": 96.5,
+        "per": "Nos",
+        "amount": "945700.00",
+        "id": "P002"
+      },
+      {
+        "description": "Plain Towels 30x60",
+        "hsn": "6304",
+        "qty": "600",
+        "rate": 60,
+        "per": "Nos",
+        "amount": "36000.00",
+        "id": "P001"
+      },
+      {
+        "description": "Cool White Plain 30x60",
+        "hsn": "6304",
+        "qty": "10",
+        "rate": 63.5,
+        "per": "Nos",
+        "amount": "635.00",
+        "id": "P003"
+      },
+      {
+        "description": "Plain Towels 35x70",
+        "hsn": "6304",
+        "qty": "20",
+        "rate": 96.5,
+        "per": "Nos",
+        "amount": "1930.00",
+        "id": "P002"
+      },
+      {
+        "description": "Plain Towels 35x70",
+        "hsn": "6304",
+        "qty": "10000",
+        "rate": 96.5,
+        "per": "Nos",
+        "amount": "965000.00",
+        "id": "P002"
+      },
+      {
+        "description": "sada towels",
+        "hsn": "6304",
+        "qty": "10000",
+        "rate": 96.5,
+        "per": "Nos",
+        "amount": "965000.00",
+        "id": "P002"
+      }
+    ],
+    "createdAt": "2026-03-27T18:07:27.072Z"
+  }
+]

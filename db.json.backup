@@ -1,0 +1,428 @@
+{
+  "customers": [
+    {
+      "id": "C001",
+      "name": "A. N S  TEXTILES",
+      "address": "410,  G.R.Nagar , Salem -636201",
+      "gstin": "33AAGFA7322M1ZH",
+      "state": "Tamil Nadu",
+      "stateCode": "33"
+    },
+    {
+      "id": "C002",
+      "name": "Sudarsan Textiles",
+      "address": "66 ,  Ramasamy Lane , Erode -638001",
+      "gstin": "33ATLPS4313A1Z2",
+      "state": "Tamil Nadu",
+      "stateCode": "33"
+    },
+    {
+      "id": "C003",
+      "name": "Hanuman Industries",
+      "address": "72/E ,  Ramasamy Lane , Erode -638001",
+      "gstin": "33AHXPS5006J1ZW",
+      "state": "Tamil Nadu",
+      "stateCode": "33"
+    },
+    {
+      "id": "C004",
+      "name": "M R K BROTHERS AND COMPANY",
+      "address": "65,   Brinda Street , Erode -638001",
+      "gstin": "33AAUFM9915C1Z1",
+      "state": "Tamil Nadu",
+      "stateCode": "33"
+    },
+    {
+      "id": "C005",
+      "name": "Suriya Mills",
+      "address": "MUTHU SARSAWATHI COMPLEX 243 , EASWARAN KOVIL STREET , Erode -638001",
+      "gstin": "33AFHPT7105H2ZF",
+      "state": "Tamil Nadu",
+      "stateCode": "33"
+    },
+    {
+      "id": "C006",
+      "name": "SRI VINAYAKA KHADI STORES",
+      "address": "243 , EASWARAN KOVIL STREET , Erode -638001",
+      "gstin": "33AOKPM7617P1ZB",
+      "state": "Tamil Nadu",
+      "stateCode": "33"
+    },
+    {
+      "id": "C007",
+      "name": "VINAYAGA FABRICS",
+      "address": "195/2,    Eswaran Kovil Street , Erode -638001",
+      "gstin": "33BGNPM2581A1ZM",
+      "state": "Tamil Nadu",
+      "stateCode": "33"
+    },
+    {
+      "id": "C008",
+      "name": "INIYAVEL TEXTILES",
+      "address": "13,     Kottaiyar Street 3 ,Karungalpalayam , Erode -638001",
+      "gstin": "33BUUPA6256P1ZZ",
+      "state": "Tamil Nadu",
+      "stateCode": "33"
+    },
+    {
+      "id": "C009",
+      "name": "PALANIVEL TEXTILES",
+      "address": "13-15,  Kottaiyar Street, Indira Nagar, Erode -638003",
+      "gstin": "33AEOPP4407L1Z7",
+      "state": "Tamil Nadu",
+      "stateCode": "33"
+    },
+    {
+      "id": "C010",
+      "name": "PVR Tex",
+      "address": "15,   Indira Nagar, Kottaiyar Street 3 , Erode -638003",
+      "gstin": "33AKLPP1099D1Z4",
+      "state": "Tamil Nadu",
+      "stateCode": "33"
+    },
+    {
+      "id": "C011",
+      "name": "SRI RG ENTERPRISE",
+      "address": "10,  Ranganathan Street 1,Karungalapalayam , Erode -638003",
+      "gstin": "33AUNPR0648C1ZP",
+      "state": "Tamil Nadu",
+      "stateCode": "33"
+    },
+    {
+      "id": "C012",
+      "name": "SREE VENKATESWARA FABRIC",
+      "address": "025, RAMASAMY STREET , Erode -638001",
+      "gstin": "33BIJPS6935G1ZX",
+      "state": "Tamil Nadu",
+      "stateCode": "33"
+    },
+    {
+      "id": "C013",
+      "name": "B. T. C. FABRICS",
+      "address": "64/43 ,  Ramasamy Lane , Erode -638001",
+      "gstin": "33BEKPM1129P1Z8",
+      "state": "Tamil Nadu",
+      "stateCode": "33"
+    },
+    {
+      "id": "C013",
+      "name": "B. T. C. FABRICS",
+      "address": "64/43 ,  Ramasamy Lane , Erode -638001",
+      "gstin": "33BEKPM1129P1Z8",
+      "state": "Tamil Nadu",
+      "stateCode": "33"
+    }
+  ],
+  "products": [
+    {
+      "id": "P001",
+      "description": "Plain Towels 35x70",
+      "hsn": "6304",
+      "rate": 102,
+      "per": "Nos"
+    },
+    {
+      "id": "P002",
+      "description": "Plain checked Towels 30x60(saada)",
+      "hsn": "6304",
+      "rate": 62,
+      "per": "Nos"
+    },
+    {
+      "id": "P003",
+      "description": "Cool White Plain 30x60",
+      "hsn": "6304",
+      "rate": 60,
+      "per": "Nos"
+    },
+    {
+      "id": "P004",
+      "description": "Cool colour Plain 30x60",
+      "hsn": "6304",
+      "rate": 61.50,
+      "per": "Nos"
+    },
+    {
+      "id": "P005",
+      "description": "Cool colour Plain 35x70",
+      "hsn": "6304",
+      "rate": 100,
+      "per": "Nos"
+    }
+  ],
+  "settings": {
+    "nextInvoiceNo": 7,
+    "financialYear": "26-27"
+  },
+  "invoices": [
+    {
+      "id": "1774706564136",
+      "invoiceDetails": {
+        "invoiceNo": 1,
+        "date": "2026-03-28"
+      },
+      "customer": {
+        "id": "C001",
+        "name": "A. N S  TEXTILES",
+        "address": "410,  G.R.Nagar , Salem -636201",
+        "gstin": "33AAGFA7322M1ZH",
+        "state": "Tamil Nadu",
+        "stateCode": "33"
+      },
+      "items": [
+        {
+          "description": "Test Product",
+          "hsn": "6304",
+          "qty": "1",
+          "rate": "100",
+          "per": "Nos",
+          "amount": "100.00"
+        }
+      ],
+      "createdAt": "2026-03-28T14:02:44.136Z"
+    },
+    {
+      "id": "1774955644294",
+      "invoiceDetails": {
+        "invoiceNo": 2,
+        "date": "2026-03-31"
+      },
+      "customer": {
+        "id": "C002",
+        "name": "Kerala Fabrics",
+        "address": "45, High Rd, Cochin",
+        "gstin": "32BBBBB0000B1Z6",
+        "state": "Kerala",
+        "stateCode": "32"
+      },
+      "items": [
+        {
+          "description": "Plain checked Towels 35x70",
+          "hsn": "6304",
+          "qty": "560",
+          "rate": 97,
+          "per": "Nos",
+          "amount": "54320.00",
+          "id": "P002"
+        }
+      ],
+      "createdAt": "2026-03-31T11:14:04.294Z"
+    },
+    {
+      "id": "1774955672155",
+      "invoiceDetails": {
+        "invoiceNo": 3,
+        "date": "2026-03-31"
+      },
+      "customer": {
+        "id": "C001",
+        "name": "A. N S  TEXTILES",
+        "address": "410,  G.R.Nagar , Salem -636201",
+        "gstin": "33AAGFA7322M1ZH",
+        "state": "Tamil Nadu",
+        "stateCode": "33"
+      },
+      "items": [
+        {
+          "description": "Plain checked Towels 35x70",
+          "hsn": "6304",
+          "qty": "155",
+          "rate": 97,
+          "per": "Nos",
+          "amount": "15035.00",
+          "id": "P002"
+        }
+      ],
+      "createdAt": "2026-03-31T11:14:32.155Z"
+    },
+    {
+      "id": "1774956545211",
+      "invoiceDetails": {
+        "invoiceNo": 4,
+        "date": "2026-03-31"
+      },
+      "customer": {
+        "id": "C001",
+        "name": "A. N S  TEXTILES",
+        "address": "410,  G.R.Nagar , Salem -636201",
+        "gstin": "33AAGFA7322M1ZH",
+        "state": "Tamil Nadu",
+        "stateCode": "33"
+      },
+      "items": [
+        {
+          "description": "Plain Towels 30x60(sadha)",
+          "hsn": "6304",
+          "qty": "600",
+          "rate": "66",
+          "per": "Nos",
+          "amount": "39600.00",
+          "id": "P001"
+        }
+      ],
+      "createdAt": "2026-03-31T11:29:05.211Z"
+    },
+    {
+      "id": "1775554078887",
+      "invoiceDetails": {
+        "invoiceNo": 1,
+        "date": "2026-04-07"
+      },
+      "customer": {
+        "id": "C001",
+        "name": "A. N S  TEXTILES",
+        "address": "410,  G.R.Nagar , Salem -636201",
+        "gstin": "33AAGFA7322M1ZH",
+        "state": "Tamil Nadu",
+        "stateCode": "33"
+      },
+      "items": [
+        {
+          "description": "Plain Towels 30x60(sadha)",
+          "hsn": "6304",
+          "qty": "6000",
+          "rate": 60,
+          "per": "Nos",
+          "amount": "360000.00",
+          "id": "P001"
+        }
+      ],
+      "createdAt": "2026-04-07T09:27:58.887Z"
+    },
+    {
+      "id": "1775897350562",
+      "invoiceDetails": {
+        "invoiceNo": 2,
+        "date": "2026-04-11"
+      },
+      "customer": {
+        "id": "C005",
+        "name": "Suriya Mills",
+        "address": "MUTHU SARSAWATHI COMPLEX 243 , EASWARAN KOVIL STREET , Erode -638001",
+        "gstin": "33AFHPT7105H2ZF",
+        "state": "Tamil Nadu",
+        "stateCode": "33"
+      },
+      "items": [
+        {
+          "description": "Plain checked Towels 35x70",
+          "hsn": "6304",
+          "qty": "600",
+          "rate": "100",
+          "per": "Nos",
+          "amount": "60000.00",
+          "id": "P002"
+        }
+      ],
+      "createdAt": "2026-04-11T08:49:10.562Z"
+    },
+    {
+      "id": "1776173751742",
+      "invoiceDetails": {
+        "invoiceNo": 3,
+        "date": "2026-04-14"
+      },
+      "customer": {
+        "id": "C001",
+        "name": "A. N S  TEXTILES",
+        "address": "410,  G.R.Nagar , Salem -636201",
+        "gstin": "33AAGFA7322M1ZH",
+        "state": "Tamil Nadu",
+        "stateCode": "33"
+      },
+      "items": [
+        {
+          "description": "Plain checked Towels 35x70",
+          "hsn": "6304",
+          "qty": "719",
+          "rate": 97,
+          "per": "Nos",
+          "amount": "69743.00",
+          "id": "P002"
+        }
+      ],
+      "createdAt": "2026-04-14T13:35:51.742Z"
+    },
+    {
+      "id": "1776249101672",
+      "invoiceDetails": {
+        "invoiceNo": 4,
+        "date": "2026-04-15"
+      },
+      "customer": {
+        "id": "C005",
+        "name": "Suriya Mills",
+        "address": "MUTHU SARSAWATHI COMPLEX 243 , EASWARAN KOVIL STREET , Erode -638001",
+        "gstin": "33AFHPT7105H2ZF",
+        "state": "Tamil Nadu",
+        "stateCode": "33"
+      },
+      "items": [
+        {
+          "description": "Plain Towels 30x60(sadha)",
+          "hsn": "6304",
+          "qty": "600",
+          "rate": 62,
+          "per": "Nos",
+          "amount": "37200.00",
+          "id": "P001"
+        }
+      ],
+      "createdAt": "2026-04-15T10:31:41.672Z"
+    },
+    {
+      "id": "1776249670206",
+      "invoiceDetails": {
+        "invoiceNo": 5,
+        "date": "2026-04-15"
+      },
+      "customer": {
+        "id": "C002",
+        "name": "Sudarsan Textiles",
+        "address": "66 ,  Ramasamy Lane , Erode -638001",
+        "gstin": "33ATLPS4313A1Z2",
+        "state": "Tamil Nadu",
+        "stateCode": "33"
+      },
+      "items": [
+        {
+          "description": "Plain Towels 30x60(sadha)",
+          "hsn": "6304",
+          "qty": "600",
+          "rate": 62,
+          "per": "Nos",
+          "amount": "37200.00",
+          "id": "P001"
+        }
+      ],
+      "createdAt": "2026-04-15T10:41:10.206Z"
+    },
+    {
+      "id": "1776249758292",
+      "invoiceDetails": {
+        "invoiceNo": 6,
+        "date": "2026-04-15"
+      },
+      "customer": {
+        "id": "C005",
+        "name": "Suriya Mills",
+        "address": "MUTHU SARSAWATHI COMPLEX 243 , EASWARAN KOVIL STREET , Erode -638001",
+        "gstin": "33AFHPT7105H2ZF",
+        "state": "Tamil Nadu",
+        "stateCode": "33"
+      },
+      "items": [
+        {
+          "description": "Plain checked Towels 35x70",
+          "hsn": "6304",
+          "qty": "8400",
+          "rate": "102",
+          "per": "Nos",
+          "amount": "856800.00",
+          "id": "P002"
+        }
+      ],
+      "createdAt": "2026-04-15T10:42:38.292Z"
+    }
+  ]
+}
