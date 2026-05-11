@@ -70,6 +70,113 @@ app.post('/api/save-pdf', upload.single('pdf'), (req, res) => {
   res.status(200).json({ message: 'PDF saved successfully', path: req.file.path });
 });
 
+// Database file paths
+const CUSTOMER_DB = path.join(__dirname, 'customerdb.json');
+const PRODUCT_DB = path.join(__dirname, 'productdb.json');
+const INVOICE_DB = path.join(__dirname, 'invoicedb.json');
+
+// Helper to read JSON
+const readDB = (filePath) => {
+  try {
+    const data = fs.readFileSync(filePath, 'utf8');
+    return JSON.parse(data);
+  } catch (error) {
+    console.error(`Error reading ${filePath}:`, error);
+    return null;
+  }
+};
+
+// Helper to write JSON
+const writeDB = (filePath, data) => {
+  try {
+    fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
+    return true;
+  } catch (error) {
+    console.error(`Error writing ${filePath}:`, error);
+    return false;
+  }
+};
+
+// --- CUSTOMERS API ---
+app.get('/customers', (req, res) => {
+  const db = readDB(CUSTOMER_DB);
+  res.json(db ? db.customers || [] : []);
+});
+
+app.post('/customers', (req, res) => {
+  const db = readDB(CUSTOMER_DB) || { customers: [] };
+  const newCustomer = req.body;
+  if (!newCustomer.id) {
+    newCustomer.id = `C${String(db.customers.length + 1).padStart(3, '0')}`;
+  }
+  db.customers.push(newCustomer);
+  if (writeDB(CUSTOMER_DB, db)) {
+    res.status(201).json(newCustomer);
+  } else {
+    res.status(500).json({ error: 'Failed to save customer' });
+  }
+});
+
+// --- PRODUCTS API ---
+app.get('/products', (req, res) => {
+  const db = readDB(PRODUCT_DB);
+  res.json(db ? db.products || [] : []);
+});
+
+app.post('/products', (req, res) => {
+  const db = readDB(PRODUCT_DB) || { products: [] };
+  const newProduct = req.body;
+  if (!newProduct.id) {
+    newProduct.id = `P${String(db.products.length + 1).padStart(3, '0')}`;
+  }
+  db.products.push(newProduct);
+  if (writeDB(PRODUCT_DB, db)) {
+    res.status(201).json(newProduct);
+  } else {
+    res.status(500).json({ error: 'Failed to save product' });
+  }
+});
+
+// --- INVOICES API ---
+app.get('/invoices', (req, res) => {
+  const db = readDB(INVOICE_DB);
+  res.json(db ? db.invoices || [] : []);
+});
+
+app.post('/invoices', (req, res) => {
+  const db = readDB(INVOICE_DB) || { invoices: [], settings: {} };
+  const newInvoice = req.body;
+  if (!newInvoice.id) {
+    newInvoice.id = Date.now().toString();
+  }
+  if (!newInvoice.createdAt) {
+    newInvoice.createdAt = new Date().toISOString();
+  }
+  db.invoices.push(newInvoice);
+  if (writeDB(INVOICE_DB, db)) {
+    res.status(201).json(newInvoice);
+  } else {
+    res.status(500).json({ error: 'Failed to save invoice' });
+  }
+});
+
+// --- SETTINGS API ---
+app.get('/settings', (req, res) => {
+  const db = readDB(INVOICE_DB);
+  res.json(db ? db.settings || {} : {});
+});
+
+app.patch('/settings', (req, res) => {
+  const db = readDB(INVOICE_DB) || { invoices: [], settings: {} };
+  const updates = req.body;
+  db.settings = { ...db.settings, ...updates };
+  if (writeDB(INVOICE_DB, db)) {
+    res.json(db.settings);
+  } else {
+    res.status(500).json({ error: 'Failed to save settings' });
+  }
+});
+
 app.listen(port, () => {
   console.log(`Backend server listening at http://localhost:${port}`);
 });
