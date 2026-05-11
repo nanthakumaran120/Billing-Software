@@ -22,3 +22,15 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+node_modules
+dist
+build
+out
+release
+*.log
+*.zip
+*.exe
+*.pdf
+*.backup
+Srinivasa Billing
