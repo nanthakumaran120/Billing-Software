@@ -1,6 +1,8 @@
-const CUSTOMERS_API_URL = 'http://localhost:3001';
-const PRODUCTS_API_URL = 'http://localhost:3003';
-const INVOICES_API_URL = 'http://localhost:3004';
+const BASE_URL = 'https://billing-software-d10w.onrender.com';
+
+const CUSTOMERS_API_URL = BASE_URL;
+const PRODUCTS_API_URL = BASE_URL;
+const INVOICES_API_URL = BASE_URL;
 
 export const fetchCustomers = async () => {
     const response = await fetch(`${CUSTOMERS_API_URL}/customers`);
@@ -69,17 +71,19 @@ export const uploadPDFToServer = async (pdfBlob, invoiceNo, customerName, date) 
         formData.append('date', date);
         formData.append('pdf', pdfBlob, `Bill No ${invoiceNo}.pdf`);
 
-        const response = await fetch('http://localhost:3002/api/save-pdf', {
+        const response = await fetch(`${BASE_URL}/api/save-pdf`, {
             method: 'POST',
-            body: formData, // Do NOT set Content-Type, browser will set it to multipart/form-data with boundary
+            body: formData,
         });
 
         if (!response.ok) {
             throw new Error(`Failed to save PDF: ${response.statusText}`);
         }
+
         return await response.json();
+
     } catch (e) {
         console.error("Failed to upload PDF", e);
         throw e;
     }
-};
+}

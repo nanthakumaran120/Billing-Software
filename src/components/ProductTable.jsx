@@ -25,7 +25,7 @@ const ProductTable = ({ items, setItems, isPreviewMode }) => {
             newItems[index] = { ...newItems[index], ...product, amount: product.rate * newItems[index].qty };
             // Ensure numeric values
             newItems[index].rate = product.rate;
-            
+
             // Auto focus on quantity field after product selection
             setTimeout(() => {
                 const qtyInput = document.getElementById(`qty-${index}`);
@@ -86,11 +86,11 @@ const ProductTable = ({ items, setItems, isPreviewMode }) => {
     return (
         <div className="flex flex-col flex-grow relative">
             {!isPreviewMode && (
-            <div className="flex justify-end mb-1 no-print">
-                <button onClick={addItem} className="text-xs flex items-center gap-1 btn-secondary py-1 px-2">
-                    <Plus size={14} /> Add Row
-                </button>
-            </div>
+                <div className="flex justify-end mb-1 no-print">
+                    <button onClick={addItem} className="text-xs flex items-center gap-1 btn-secondary py-1 px-2">
+                        <Plus size={14} /> Add Row
+                    </button>
+                </div>
             )}
 
             <table className="ledger-table w-full flex-grow">
@@ -165,44 +165,44 @@ const ProductTable = ({ items, setItems, isPreviewMode }) => {
                                 />
                             </td>
                             {!isPreviewMode && (
-                            <td className="no-print text-center p-1">
-                                <div className="flex justify-center items-center gap-1">
-                                    {items.length > 1 && (
-                                        <button onClick={() => removeItem(index)} className="btn-danger p-1">
-                                            <Trash2 size={14} />
-                                        </button>
-                                    )}
-                                </div>
-                            </td>
+                                <td className="no-print text-center p-1">
+                                    <div className="flex justify-center items-center gap-1">
+                                        {items.length > 1 && (
+                                            <button onClick={() => removeItem(index)} className="btn-danger p-1">
+                                                <Trash2 size={14} />
+                                            </button>
+                                        )}
+                                    </div>
+                                </td>
                             )}
                         </tr>
                     ))}
                     {/* Single Spacer Row to push everything else up and fill the rest of the A4 page */}
                     {items.length < 12 && (
-                         <tr style={{ height: `${Math.max(0, 280 - items.length * 42)}px` }}>
-                             <td className="border-r border-gray-400"></td>
-                             <td className="border-r border-gray-400"></td>
-                             <td className="border-r border-gray-400"></td>
-                             <td className="border-r border-gray-400"></td>
-                             <td className="border-r border-gray-400"></td>
-                             <td className="border-r border-gray-400"></td>
-                             <td className="print:border-r-0"></td>
-                             {!isPreviewMode && <td className="no-print border-r-0"></td>}
-                         </tr>
+                        <tr style={{ height: `${Math.max(0, 280 - items.length * 42)}px` }}>
+                            <td className="border-r border-gray-400"></td>
+                            <td className="border-r border-gray-400"></td>
+                            <td className="border-r border-gray-400"></td>
+                            <td className="border-r border-gray-400"></td>
+                            <td className="border-r border-gray-400"></td>
+                            <td className="border-r border-gray-400"></td>
+                            <td className="print:border-r-0"></td>
+                            {!isPreviewMode && <td className="no-print border-r-0"></td>}
+                        </tr>
                     )}
-                    
+
                     {/* Footer Row matching manual book total style */}
                     <tr className="bg-blue-50">
-                         <td className="border-r border-gray-400"></td>
-                         <td className="font-bold text-gray-600 text-right px-2 py-1 border-r border-gray-400">Total Quantity</td>
-                         <td className="border-r border-gray-400"></td>
-                         <td className="font-bold text-blue-700 text-center py-1 border-r border-gray-400">{totalQuantity > 0 ? totalQuantity : ''}</td>
-                         <td className="border-r border-gray-400"></td>
-                         <td className="border-r border-gray-400"></td>
-                         <td className="font-bold text-right pt-1 pb-1 px-1 print:border-r-0">
-                             <div className="w-full text-right">{/* Let Summary take care of the final grand totals mostly */}</div>
-                         </td>
-                         {!isPreviewMode && <td className="no-print border-r-0"></td>}
+                        <td className="border-r border-gray-400"></td>
+                        <td className="font-bold text-gray-600 text-right px-2 py-1 border-r border-gray-400">Total Quantity</td>
+                        <td className="border-r border-gray-400"></td>
+                        <td className="font-bold text-blue-700 text-center py-1 border-r border-gray-400">{totalQuantity > 0 ? totalQuantity : ''}</td>
+                        <td className="border-r border-gray-400"></td>
+                        <td className="border-r border-gray-400"></td>
+                        <td className="font-bold text-right pt-1 pb-1 px-1 print:border-r-0">
+                            <div className="w-full text-right">{/* Let Summary take care of the final grand totals mostly */}</div>
+                        </td>
+                        {!isPreviewMode && <td className="no-print border-r-0"></td>}
                     </tr>
                 </tbody>
             </table>

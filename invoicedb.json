@@ -376,10 +376,78 @@
         }
       ],
       "createdAt": "2026-05-05T15:18:01.444Z"
+    },
+    {
+      "id": "1778250923505",
+      "invoiceDetails": {
+        "invoiceNo": 11,
+        "date": "2026-05-08"
+      },
+      "customer": {
+        "id": "C005",
+        "name": "Suriya Mills",
+        "address": "MUTHU SARSAWATHI COMPLEX 243 , EASWARAN KOVIL STREET , Erode -638001",
+        "gstin": "33AFHPT7105H2ZF",
+        "state": "Tamil Nadu",
+        "stateCode": "33"
+      },
+      "items": [
+        {
+          "description": "Plain Towels 35x70",
+          "hsn": "6304",
+          "qty": "4800",
+          "rate": "100.5",
+          "per": "Nos",
+          "amount": "482400.00",
+          "id": "P001"
+        }
+      ],
+      "createdAt": "2026-05-08T14:35:23.505Z"
+    },
+    {
+      "id": "1778251633431",
+      "invoiceDetails": {
+        "invoiceNo": 12,
+        "date": "2026-05-08"
+      },
+      "customer": {
+        "id": "C005",
+        "name": "Suriya Mills",
+        "address": "MUTHU SARSAWATHI COMPLEX 243 , EASWARAN KOVIL STREET , Erode -638001",
+        "gstin": "33AFHPT7105H2ZF",
+        "state": "Tamil Nadu",
+        "stateCode": "33"
+      },
+      "items": [
+        {
+          "description": "Plain Towels 35x70",
+          "hsn": "6304",
+          "qty": "1000",
+          "rate": 102,
+          "per": "Nos",
+          "amount": "102000.00",
+          "id": "P001"
+        }
+      ],
+      "createdAt": "2026-05-08T14:47:13.431Z"
     }
   ],
   "settings": {
-    "nextInvoiceNo": 11,
-    "financialYear": "26-27"
+    "item": {
+      "item": {
+        "item": {
+          "item": {
+            "nextInvoiceNo": 11,
+            "financialYear": "26-27"
+          },
+          "nextInvoiceNo": 12
+        },
+        "financialYear": "26-27",
+        "nextInvoiceNo": 12
+      },
+      "nextInvoiceNo": 13
+    },
+    "financialYear": "26-27",
+    "nextInvoiceNo": 13
   }
 }

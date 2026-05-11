@@ -36,13 +36,17 @@ const getMonthFolderName = (dateStr) => {
 };
 
 // Set up storage for multer
+// In production (Electron), INVOICE_STORAGE_PATH is set to a writable Documents subfolder.
+// In development, invoices are stored locally in the project's ./invoices folder.
+const baseInvoicePath = process.env.INVOICE_STORAGE_PATH || path.join(__dirname, 'invoices');
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     const dateStr = req.body.date || new Date().toISOString();
     const fyFolder = getFinancialYear(dateStr);
     const monthFolder = getMonthFolderName(dateStr);
 
-    const dir = path.join(__dirname, 'invoices', fyFolder, monthFolder);
+    const dir = path.join(baseInvoicePath, fyFolder, monthFolder);
 
     // Create the directory if it doesn't exist
     fs.mkdirSync(dir, { recursive: true });

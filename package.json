@@ -1,27 +1,33 @@
 {
-  "name": "billing",
+  "name": "srinivasa-billing",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "main": "electron/main.cjs",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && node -e \"const fs=require('fs');let h=fs.readFileSync('dist/index.html','utf8');fs.writeFileSync('dist/index.html',h.replace(/ crossorigin/g,''));\"",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "server-customers": "json-server --watch customerdb.json --port 3001",
     "server-products": "json-server --watch productdb.json --port 3003",
     "server-invoices": "json-server --watch invoicedb.json --port 3004",
     "express-server": "node server.js",
-    "start": "concurrently \"npm run server-customers\" \"npm run server-products\" \"npm run server-invoices\" \"npm run express-server\" \"npm run dev\""
+    "start": "concurrently \"npm run server-customers\" \"npm run server-products\" \"npm run server-invoices\" \"npm run express-server\" \"npm run dev\"",
+    "electron-start": "concurrently \"npm run server-customers\" \"npm run server-products\" \"npm run server-invoices\" \"npm run express-server\" \"npm run dev\" \"wait-on tcp:3005 && cross-env NODE_ENV=development electron .\"",
+    "electron-pack": "npm run build && electron-builder --win --x64"
   },
   "dependencies": {
     "cors": "^2.8.6",
+    "electron-is-dev": "^3.0.1",
     "express": "^5.2.1",
     "html2pdf.js": "^0.14.0",
+    "json-server": "^1.0.0-alpha.23",
     "lucide-react": "^0.344.0",
     "multer": "^2.1.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "wait-on": "^8.0.3",
     "written-number": "^0.11.1"
   },
   "devDependencies": {
@@ -29,11 +35,51 @@
     "@types/react-dom": "^18.2.19",
     "@vitejs/plugin-react": "^5.1.4",
     "concurrently": "^8.2.2",
+    "cross-env": "^7.0.3",
+    "electron": "^36.2.1",
+    "electron-builder": "^26.8.1",
     "eslint": "^8.56.0",
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
-    "json-server": "^1.0.0-alpha.23",
     "vite": "^7.3.1"
+  },
+  "build": {
+    "appId": "com.srinivasa.billing",
+    "productName": "Srinivasa Billing",
+    "directories": {
+      "output": "release"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "public/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Srinivasa Billing"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "node_modules/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "customerdb.json",
+        "to": "customerdb.json"
+      },
+      {
+        "from": "productdb.json",
+        "to": "productdb.json"
+      },
+      {
+        "from": "invoicedb.json",
+        "to": "invoicedb.json"
+      }
+    ]
   }
 }
