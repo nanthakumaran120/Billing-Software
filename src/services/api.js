@@ -1,4 +1,4 @@
-const BASE_URL = 'https://billing-software-d10w.onrender.com';
+const BASE_URL = 'http://localhost:3002';
 
 const CUSTOMERS_API_URL = BASE_URL;
 const PRODUCTS_API_URL = BASE_URL;
@@ -49,6 +49,16 @@ export const saveSettings = async (settingsUpdates) => {
     }
 };
 
+export const fetchInvoices = async () => {
+    try {
+        const response = await fetch(`${INVOICES_API_URL}/invoices`);
+        return await response.json();
+    } catch (e) {
+        console.error("Failed to fetch invoices", e);
+        return [];
+    }
+};
+
 export const saveInvoice = async (invoiceData) => {
     try {
         const response = await fetch(`${INVOICES_API_URL}/invoices`, {
@@ -87,3 +97,22 @@ export const uploadPDFToServer = async (pdfBlob, invoiceNo, customerName, date) 
         throw e;
     }
 }
+
+export const saveWordReport = async (htmlContent, monthStr) => {
+    try {
+        const response = await fetch(`${BASE_URL}/api/save-word-report`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ html: htmlContent, monthStr })
+        });
+        
+        if (!response.ok) {
+            throw new Error(`Failed to save report: ${response.statusText}`);
+        }
+        
+        return await response.json();
+    } catch (e) {
+        console.error("Failed to save Word report to server", e);
+        throw e;
+    }
+};

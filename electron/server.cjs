@@ -8,7 +8,7 @@ const app = express();
 const port = 3002;
 
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
 
 const getFinancialYear = (dateStr) => {
   const d = new Date(dateStr);
@@ -58,6 +58,45 @@ app.post('/api/save-pdf', upload.single('pdf'), (req, res) => {
   }
   console.log(`Successfully saved PDF to ${req.file.path}`);
   res.status(200).json({ message: 'PDF saved successfully', path: req.file.path });
+});
+
+app.post('/api/save-word-report', (req, res) => {
+  try {
+    const { html, monthStr } = req.body;
+    if (!html || !monthStr) return res.status(400).send('Missing html or monthStr');
+
+    let dir;
+    if (monthStr === 'All_Months') {
+        const fyFolder = getFinancialYear(new Date().toISOString());
+        dir = path.join(baseInvoicePath, fyFolder, 'All_Months_Reports');
+    } else {
+        const dateObj = new Date(`1 ${monthStr}`);
+        const dateStr = dateObj.toISOString();
+        const fyFolder = getFinancialYear(dateStr);
+        const monthFolder = getMonthFolderName(dateStr);
+        dir = path.join(baseInvoicePath, fyFolder, monthFolder);
+    }
+
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+
+    const filePath = path.join(dir, `Report_${monthStr.replace(' ', '_')}_${Date.now()}.doc`);
+    
+    const wordHtml = `
+      <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+      <head><meta charset='utf-8'><title>Monthly Report</title></head>
+      <body>${html}</body>
+      </html>
+    `;
+
+    fs.writeFileSync(filePath, wordHtml, 'utf8');
+    console.log(`Successfully saved Word report to ${filePath}`);
+    res.status(200).json({ message: 'Report saved successfully', path: filePath });
+  } catch (error) {
+    console.error("Error saving word report:", error);
+    res.status(500).json({ error: 'Failed to save word report' });
+  }
 });
 
 app.listen(port, () => {

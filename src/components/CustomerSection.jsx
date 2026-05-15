@@ -198,7 +198,7 @@ const CustomerSection = ({ customer, setCustomer, invoiceDetails, setInvoiceDeta
                                                  )}
                                              </>
                                          ) : (
-                                             <li className="autocomplete-item subtitle" style={{ fontStyle: 'italic', textAlign: 'center' }}>No matches found...</li>
+                                              <li className="autocomplete-item no-match">No matches found...</li>
                                          )}
                                      </ul>
                                  )}
@@ -271,7 +271,7 @@ const CustomerSection = ({ customer, setCustomer, invoiceDetails, setInvoiceDeta
                 {!isPreviewMode && (
                 <div className="absolute top-2 right-2 flex gap-2 no-print">
                     <select
-                        className="text-xs bg-gray-100 border border-gray-300 rounded p-1 cursor-pointer"
+                        className="text-xs bg-white border border-blue-200 text-blue-800 rounded-md px-2 py-1 cursor-pointer shadow-sm hover:border-blue-400 transition-colors"
                         onChange={handleCustomerSelect}
                         value={isNew ? 'new' : (customer.id || '')}
                     >
@@ -285,7 +285,7 @@ const CustomerSection = ({ customer, setCustomer, invoiceDetails, setInvoiceDeta
                     {isNew && (
                         <button
                             onClick={saveNewCustomer}
-                            className="text-xs bg-green-100 text-green-700 px-2 rounded hover:bg-green-200"
+                            className="text-xs bg-blue-700 text-white px-3 py-1 rounded-md shadow-sm hover:bg-blue-800 transition-colors font-bold"
                         >
                             Save
                         </button>

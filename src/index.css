@@ -35,8 +35,8 @@ body {
   justify-content: center;
   min-width: 320px;
   min-height: 100vh;
-  background: #f1f5f9;
-  /* Simple clean backdrop */
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  background-attachment: fixed;
   color: var(--color-text);
   -webkit-print-color-adjust: exact !important;
   print-color-adjust: exact !important;
@@ -58,11 +58,21 @@ body {
 .action-bar {
   width: 100%;
   max-width: 95vw;
-  /* Matched with invoice-paper */
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
   margin-bottom: 1rem;
+  padding: 1rem 1.5rem;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  position: sticky;
+  top: 1rem;
+  z-index: 50;
+  transition: all 0.3s ease;
 }
 
 .action-bar button {
@@ -92,12 +102,12 @@ body {
   width: 210mm;
   min-height: 297mm;
   padding: 10mm;
-  box-shadow: 0 0 50px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+  border: none;
 }
 
 .preview-active .app-container {
-  background-color: #cbd5e1;
-  /* Darker backdrop for focus */
+  background: radial-gradient(circle at center, #64748b 0%, #334155 100%);
   min-height: 100vh;
 }
 
@@ -608,43 +618,108 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   margin-right: 1rem;
 }
 
-/* Buttons */
+/* ═══════════════════════════════════════
+   BUTTONS  —  3-D Tile Push Style
+   Matches the reference: bright blue tile
+   with white raised edge on right+bottom
+═══════════════════════════════════════ */
+
 button {
   cursor: pointer;
-  padding: 0.5rem 1rem;
-  border: 1px solid transparent;
-  font-weight: 500;
-  font-size: 0.875rem;
-  transition: all 0.2s;
+  padding: 0.55rem 1.3rem;
+  border: none;
+  font-weight: 700;
+  font-size: 0.88rem;
+  letter-spacing: 0.02em;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  position: relative;
+  transition: box-shadow 0.1s ease, transform 0.1s ease;
+  user-select: none;
 }
 
+/* ── Primary (blue tile) ── */
 .btn-primary {
-  background-color: var(--color-primary);
-  color: white;
+  background: #1565c0;               /* vivid blue fill */
+  color: #ffffff;
+  /* right + bottom white border = the "raised edge" from the image */
+  box-shadow:
+    4px 4px 0px 0px rgba(255,255,255,0.85),   /* white raised edge */
+    6px 6px 0px 0px rgba(15, 45, 120, 0.35);  /* dark outer depth */
 }
 
 .btn-primary:hover {
-  background-color: #1e40af;
+  background: #1976d2;
+  box-shadow:
+    5px 5px 0px 0px rgba(255,255,255,0.9),
+    8px 8px 0px 0px rgba(15, 45, 120, 0.3);
+  transform: translate(-1px, -1px);
 }
 
+.btn-primary:active {
+  background: #0d47a1;
+  box-shadow:
+    1px 1px 0px 0px rgba(255,255,255,0.6),
+    2px 2px 0px 0px rgba(15, 45, 120, 0.25);
+  transform: translate(3px, 3px);    /* press-down effect */
+}
+
+.btn-primary:disabled {
+  background: #90a4c8;
+  box-shadow: 3px 3px 0px 0px rgba(255,255,255,0.5),
+              5px 5px 0px 0px rgba(100,120,160,0.2);
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ── Secondary (white tile) ── */
 .btn-secondary {
-  background-color: white;
-  border-color: var(--color-border);
-  color: var(--color-text);
+  background: #f0f4ff;
+  color: #1e40af;
+  box-shadow:
+    4px 4px 0px 0px rgba(255,255,255,0.95),
+    6px 6px 0px 0px rgba(30, 64, 175, 0.25);
 }
 
 .btn-secondary:hover {
-  background-color: var(--color-accent);
+  background: #e3ecff;
+  box-shadow:
+    5px 5px 0px 0px rgba(255,255,255,1),
+    8px 8px 0px 0px rgba(30, 64, 175, 0.2);
+  transform: translate(-1px, -1px);
 }
 
+.btn-secondary:active {
+  background: #dbe5ff;
+  box-shadow:
+    1px 1px 0px 0px rgba(255,255,255,0.8),
+    2px 2px 0px 0px rgba(30, 64, 175, 0.15);
+  transform: translate(3px, 3px);
+}
+
+/* ── Danger (small icon button, no 3D) ── */
 .btn-danger {
   color: #ef4444;
   background: none;
+  border: none;
+  box-shadow: none;
   padding: 0.25rem;
+  border-radius: 4px;
+  transition: background-color 0.15s;
 }
 
 .btn-danger:hover {
   background-color: #fee2e2;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-danger:active {
+  transform: none;
+  box-shadow: none;
 }
 
 /* Ledger Borders inside Master Box */
@@ -807,39 +882,58 @@ table {
   }
 }
 
-/* Custom Autocomplete Dropdown */
+/* ═══════════════════════════════════════════════════════════════
+   UNIFIED AUTOCOMPLETE / POPUP DROPDOWN THEME
+   Used by: Customer name search  +  Product description search
+   Design: Premium white card with blue accents — matches invoice
+═══════════════════════════════════════════════════════════════ */
+
+/* ── Floating card container ── */
 .autocomplete-dropdown {
   position: absolute;
-  top: 100%;
-  left: 0;
-  width: 100%;
-  z-index: 500;
-  margin-top: 0.25rem;
-  background-color: #1f2937;
-  color: #f3f4f6;
-  border: 1px solid #374151;
-  border-radius: 0.375rem;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
-  max-height: 250px;
+  top: calc(100% + 4px);
+  left: -8px;
+  min-width: calc(100% + 16px);
+  z-index: 999;
+  background: #ffffff;
+  border: 1.5px solid #bfdbfe;          /* blue-200 */
+  border-top: 3px solid #1e40af;        /* blue-800 accent stripe */
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 12px 28px -4px rgba(30, 64, 175, 0.15),
+              0 4px 10px -2px rgba(0, 0, 0, 0.08);
+  max-height: 260px;
   overflow-y: auto;
   list-style-type: none;
-  padding: 0;
+  padding: 4px 0;
+  animation: dropdown-open 0.15s ease-out;
 }
+
+@keyframes dropdown-open {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Scrollbar styling for the dropdown */
+.autocomplete-dropdown::-webkit-scrollbar { width: 5px; }
+.autocomplete-dropdown::-webkit-scrollbar-track { background: #f1f5f9; }
+.autocomplete-dropdown::-webkit-scrollbar-thumb { background: #93c5fd; border-radius: 4px; }
+.autocomplete-dropdown::-webkit-scrollbar-thumb:hover { background: #3b82f6; }
 
 @media print {
-  .autocomplete-dropdown {
-    display: none !important;
-  }
+  .autocomplete-dropdown { display: none !important; }
 }
 
+/* ── Individual list item ── */
 .autocomplete-item {
-  padding: 0.5rem;
-  border-bottom: 1px solid #374151;
+  padding: 7px 12px;
+  border-bottom: 1px solid #eff6ff;     /* blue-50 separator */
   cursor: pointer;
   display: flex;
   flex-direction: column;
-  transition: background-color 0.2s;
-  font-size: 0.75rem;
+  gap: 2px;
+  transition: background-color 0.15s, border-left-color 0.15s;
+  font-size: 0.78rem;
+  border-left: 3px solid transparent;
 }
 
 .autocomplete-item:last-child {
@@ -847,36 +941,60 @@ table {
 }
 
 .autocomplete-item:hover {
-  background-color: #374151;
+  background-color: #eff6ff;            /* blue-50 */
+  border-left-color: #1e40af;           /* blue-800 */
 }
 
+.autocomplete-item:active {
+  background-color: #dbeafe;            /* blue-100 */
+}
+
+/* Item title (customer/product name) */
 .autocomplete-item .title {
   font-weight: 700;
-  color: #ffffff;
+  color: #1e3a8a;                       /* blue-900 */
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.02em;
 }
 
+/* Item subtitle (address, GST, rate etc.) */
 .autocomplete-item .subtitle {
-  color: #9ca3af;
-  font-size: 0.65rem;
+  color: #64748b;                       /* slate-500 */
+  font-size: 0.68rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  margin-top: 0.1rem;
+  margin-top: 1px;
 }
 
+/* ── "Show more" footer link ── */
 .autocomplete-show-more {
-  padding: 0.75rem;
+  padding: 8px 12px;
   text-align: center;
   font-size: 0.75rem;
-  font-weight: bold;
-  color: #60a5fa;
+  font-weight: 700;
+  color: #1e40af;                       /* blue-800 */
   cursor: pointer;
-  transition: all 0.2s;
-  background-color: #1f2937;
-  border-top: 1px solid #374151;
+  transition: background-color 0.15s, color 0.15s;
+  background-color: #f8fafc;            /* very light bg */
+  border-top: 1px dashed #bfdbfe;       /* blue-200 dashed */
+  letter-spacing: 0.03em;
 }
 
 .autocomplete-show-more:hover {
-  background-color: #374151;
-  color: #93c5fd;
+  background-color: #dbeafe;            /* blue-100 */
+  color: #1e3a8a;                       /* blue-900 */
+}
+
+/* ── Empty / no-match state ── */
+.autocomplete-item.no-match {
+  color: #94a3b8;                       /* slate-400 */
+  font-style: italic;
+  text-align: center;
+  cursor: default;
+  border-left-color: transparent !important;
+}
+.autocomplete-item.no-match:hover {
+  background-color: transparent;
 }

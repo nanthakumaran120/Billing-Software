@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Printer, Edit } from 'lucide-react';
+import { Printer, Edit, FileText } from 'lucide-react';
 import html2pdf from 'html2pdf.js';
 import Header from './components/Header';
 import CustomerSection from './components/CustomerSection';
 import ProductTable from './components/ProductTable';
 import SummarySection from './components/SummarySection';
+import ReportList from './components/ReportList';
 import { fetchSettings, saveSettings, saveInvoice, uploadPDFToServer } from './services/api';
 
 const getFinancialYear = (dateStr) => {
@@ -19,6 +20,7 @@ const getFinancialYear = (dateStr) => {
 };
 
 function App() {
+  const [currentView, setCurrentView] = useState('invoice'); // 'invoice' or 'reports'
   const [invoiceDetails, setInvoiceDetails] = useState({
     invoiceNo: '',
     date: new Date().toISOString().split('T')[0]
@@ -156,7 +158,7 @@ function App() {
       });
       
       // Wait for it to save to the designated folder
-      const result = await uploadPDFToServer(pdfBlob, invoiceDetails.invoiceNo, customer.name, invoiceDetails.date);
+      await uploadPDFToServer(pdfBlob, invoiceDetails.invoiceNo, customer.name, invoiceDetails.date);
 
       // 4. Increment invoice number in settings
       const currentNo = parseInt(invoiceDetails.invoiceNo) || 0;
@@ -179,18 +181,30 @@ function App() {
     }
   };
 
+  if (currentView === 'reports') {
+    return <ReportList onBack={() => setCurrentView('invoice')} />;
+  }
+
   return (
     <div className={`app-container print-container ${isPreviewMode ? 'preview-active' : ''}`}>
 
       {/* Action Bar */}
       <div className="action-bar no-print">
         {!isPreviewMode ? (
-          <button
-            onClick={handlePreviewToggle}
-            className="btn-primary"
-          >
-            Preview & Finalize Invoice
-          </button>
+          <>
+            <button
+              onClick={handlePreviewToggle}
+              className="btn-primary"
+            >
+              Preview & Finalize Invoice
+            </button>
+            <button
+              onClick={() => setCurrentView('reports')}
+              className="btn-secondary flex items-center gap-2"
+            >
+              <FileText size={18} /> View Reports
+            </button>
+          </>
         ) : (
           <>
             <button
