@@ -4,6 +4,7 @@ import multer from 'multer';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { createClient } from '@supabase/supabase-js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -11,11 +12,18 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const port = process.env.PORT || 3002;
 
+// Supabase Initialization
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_KEY = process.env.SUPABASE_ANON_KEY;
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
-
-// Serving static files from the 'dist' directory (frontend)
 app.use(express.static(path.join(__dirname, 'dist')));
+
+// Memory storage for uploads
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
 const getFinancialYear = (dateStr) => {
   const d = new Date(dateStr);
@@ -37,302 +45,111 @@ const getMonthFolderName = (dateStr) => {
   return `${month}-${monthName}-${year2}`;
 };
 
-// Consolidated storage path for persistence
-const baseInvoicePath = process.env.INVOICE_STORAGE_PATH || path.join(__dirname, 'data', 'invoices');
+// --- CUSTOMERS API ---
+app.get('/customers', async (req, res) => {
+  const { data, error } = await supabase.from('customers').select('*');
+  if (error) return res.status(500).json(error);
+  res.json(data || []);
+});
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const dateStr = req.body.date || new Date().toISOString();
-    const fyFolder = getFinancialYear(dateStr);
-    const monthFolder = getMonthFolderName(dateStr);
-    const dir = path.join(baseInvoicePath, fyFolder, monthFolder);
-    fs.mkdirSync(dir, { recursive: true });
-    cb(null, dir);
-  },
-  filename: (req, file, cb) => {
-    const invoiceNo = req.body.invoiceNo || 'Unknown';
-    cb(null, `Bill No ${invoiceNo}.pdf`);
+app.post('/customers', async (req, res) => {
+  const { data, error } = await supabase.from('customers').upsert(req.body).select();
+  if (error) return res.status(500).json(error);
+  res.status(201).json(data[0]);
+});
+
+// --- PRODUCTS API ---
+app.get('/products', async (req, res) => {
+  const { data, error } = await supabase.from('products').select('*');
+  if (error) return res.status(500).json(error);
+  res.json(data || []);
+});
+
+app.post('/products', async (req, res) => {
+  const { data, error } = await supabase.from('products').upsert(req.body).select();
+  if (error) return res.status(500).json(error);
+  res.status(201).json(data[0]);
+});
+
+// --- INVOICES API ---
+app.get('/invoices', async (req, res) => {
+  const { data, error } = await supabase.from('invoices').select('*').order('created_at', { ascending: false });
+  if (error) return res.status(500).json(error);
+  
+  // Map Supabase fields to the format the frontend expects
+  const mappedData = data.map(inv => ({
+    id: inv.id,
+    customer: inv.customer_data,
+    items: inv.items,
+    invoiceDetails: inv.invoice_details,
+    totalAmount: inv.total_amount,
+    createdAt: inv.created_at
+  }));
+  res.json(mappedData);
+});
+
+app.post('/invoices', async (req, res) => {
+  const inv = req.body;
+  const { data, error } = await supabase.from('invoices').insert({
+    id: inv.id || Date.now().toString(),
+    customer_id: inv.customer?.id,
+    customer_data: inv.customer,
+    items: inv.items,
+    invoice_details: inv.invoiceDetails,
+    total_amount: inv.totalAmount || 0
+  }).select();
+  
+  if (error) return res.status(500).json(error);
+  res.status(201).json(data[0]);
+});
+
+// --- SETTINGS API ---
+app.get('/settings', async (req, res) => {
+  const { data, error } = await supabase.from('settings').select('*');
+  if (error) return res.status(500).json(error);
+  const settings = {};
+  data.forEach(s => settings[s.key] = s.value);
+  res.json(settings);
+});
+
+app.patch('/settings', async (req, res) => {
+  const updates = req.body;
+  for (const key in updates) {
+    await supabase.from('settings').upsert({ key, value: updates[key] });
   }
+  res.json({ message: 'Settings updated' });
 });
 
-const upload = multer({ storage: storage });
+// --- PDF & WORD STORAGE ---
 
-const autoGenerateWordReportForDate = (dateStr) => {
-    try {
-        const d = new Date(dateStr);
-        const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-        const monthStr = `${monthNames[d.getMonth()]} ${d.getFullYear()}`;
+app.post('/api/save-pdf', upload.single('pdf'), async (req, res) => {
+  if (!req.file) return res.status(400).send('No file uploaded.');
+  const { invoiceNo, date } = req.body;
+  const fy = getFinancialYear(date || new Date().toISOString());
+  const month = getMonthFolderName(date || new Date().toISOString());
+  const filePath = `${fy}/${month}/Bill No ${invoiceNo}.pdf`;
 
-        const fyFolder = getFinancialYear(dateStr);
-        const monthFolder = getMonthFolderName(dateStr);
-        const dir = path.join(baseInvoicePath, fyFolder, monthFolder);
+  const { data, error } = await supabase.storage
+    .from('invoices')
+    .upload(filePath, req.file.buffer, { contentType: 'application/pdf', upsert: true });
 
-        if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-
-        const filePath = path.join(dir, `Report_${monthStr.replace(' ', '_')}.doc`);
-
-        const invoiceDbPath = path.join(__dirname, 'data', 'invoicedb.json');
-        let data = { invoices: [] };
-        if (fs.existsSync(invoiceDbPath)) {
-            data = JSON.parse(fs.readFileSync(invoiceDbPath, 'utf8') || '{"invoices":[]}');
-        }
-        const invoices = data.invoices || [];
-
-        const filteredInvoices = invoices.filter(inv => {
-            if (!inv.invoiceDetails || !inv.invoiceDetails.date) return false;
-            const idate = new Date(inv.invoiceDetails.date);
-            return idate.getMonth() === d.getMonth() && idate.getFullYear() === d.getFullYear();
-        });
-
-        filteredInvoices.sort((a, b) => {
-            const numA = parseInt(a.invoiceDetails.invoiceNo) || 0;
-            const numB = parseInt(b.invoiceDetails.invoiceNo) || 0;
-            return numA - numB;
-        });
-
-        const formatCurrency = (amount) => Number(amount).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        const formatDate = (dateString) => {
-            if (!dateString) return '';
-            const d2 = new Date(dateString);
-            return `${String(d2.getDate()).padStart(2, '0')}/${String(d2.getMonth() + 1).padStart(2, '0')}/${d2.getFullYear()}`;
-        };
-
-        let rowsHtml = '';
-        let totalSub = 0, totalCgst = 0, totalSgst = 0, totalIgst = 0, totalAmt = 0;
-
-        if (filteredInvoices.length === 0) {
-            rowsHtml = `<tr><td colspan="10" style="border: 1px solid black; padding: 5px; text-align: center;">No invoices found.</td></tr>`;
-        } else {
-            filteredInvoices.forEach((inv, index) => {
-                const items = inv.items || [];
-                const customer = inv.customer || {};
-                const stateCode = customer.stateCode || '';
-                
-                const subtotal = items.reduce((acc, item) => acc + (parseFloat(item.amount) || 0), 0);
-                const isIntraState = stateCode === '33';
-                const cgst = isIntraState ? subtotal * 0.025 : 0;
-                const sgst = isIntraState ? subtotal * 0.025 : 0;
-                const igst = !isIntraState ? subtotal * 0.05 : 0;
-                const totalAmount = Math.round(subtotal + cgst + sgst + igst);
-
-                totalSub += subtotal; totalCgst += cgst; totalSgst += sgst; totalIgst += igst; totalAmt += totalAmount;
-
-                rowsHtml += `
-                    <tr>
-                        <td style="border: 1px solid black; padding: 5px; text-align: center;">${index + 1}</td>
-                        <td style="border: 1px solid black; padding: 5px;">${customer.gstin || '-'}</td>
-                        <td style="border: 1px solid black; padding: 5px; font-weight: bold;">${customer.name || '-'}</td>
-                        <td style="border: 1px solid black; padding: 5px; text-align: center;">${inv.invoiceDetails.invoiceNo || '-'}</td>
-                        <td style="border: 1px solid black; padding: 5px; text-align: center;">${formatDate(inv.invoiceDetails.date)}</td>
-                        <td style="border: 1px solid black; padding: 5px; text-align: right;">${formatCurrency(subtotal)}</td>
-                        <td style="border: 1px solid black; padding: 5px; text-align: right;">${formatCurrency(cgst)}</td>
-                        <td style="border: 1px solid black; padding: 5px; text-align: right;">${formatCurrency(sgst)}</td>
-                        <td style="border: 1px solid black; padding: 5px; text-align: right;">${formatCurrency(igst)}</td>
-                        <td style="border: 1px solid black; padding: 5px; text-align: right; font-weight: bold;">${formatCurrency(totalAmount)}</td>
-                    </tr>
-                `;
-            });
-        }
-
-        const htmlString = `
-            <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-            <head>
-                <meta charset='utf-8'>
-                <title>Monthly Report</title>
-                <style>
-                    @page WordSection1 { size: 841.9pt 595.3pt; mso-page-orientation: landscape; margin: 36.0pt 36.0pt 36.0pt 36.0pt; }
-                    div.WordSection1 { page: WordSection1; }
-                    table { border-collapse: collapse; width: 100%; font-family: Arial, sans-serif; font-size: 11px; }
-                    th, td { border: 1px solid black; padding: 6px; }
-                    th { background-color: #f3f4f6; font-weight: bold; text-align: center; }
-                </style>
-            </head>
-            <body>
-            <div class="WordSection1">
-                <div style="text-align: center; margin-bottom: 20px;">
-                    <h1 style="color: #1e3a8a; font-family: Arial, sans-serif; font-size: 24px; margin: 0;">SRINIVASA DYEING</h1>
-                    <p style="font-family: Arial, sans-serif; font-weight: bold; font-size: 12px; margin: 5px 0;">DYEING &amp; CLOTH MERCHANT</p>
-                    <p style="font-family: Arial, sans-serif; font-size: 10px; margin: 0;">22, Kattur Road, C.S. Puram P.O., 637 401, Rasipuram Tk, Namakkal Dt, Tamil Nadu</p>
-                    <p style="font-family: Arial, sans-serif; font-weight: bold; font-size: 12px; margin: 5px 0;">GSTIN: 33AKQPA9652A1ZD</p>
-                </div>
-                
-                <table style="width: 100%; border: none; margin-bottom: 10px; font-family: Arial, sans-serif;">
-                    <tr>
-                        <td style="border: none; text-align: left;">
-                            <strong style="font-size: 14px;">MONTHLY SALES / GST REPORT (GSTR-2B Format)</strong><br/>
-                            Statement for the month of: ${monthStr}
-                        </td>
-                        <td style="border: none; text-align: right; vertical-align: bottom;">
-                            Date of Generation: ${formatDate(new Date().toISOString())}
-                        </td>
-                    </tr>
-                </table>
-
-                <table border="1" cellpadding="5" cellspacing="0" style="border: 2px solid black; border-collapse: collapse; width: 100%; font-family: Arial, sans-serif; font-size: 11px;">
-                    <thead>
-                        <tr style="background-color: #e5e7eb;">
-                            <th>S.No</th>
-                            <th>GSTIN of supplier/buyer</th>
-                            <th>Trade/Legal name</th>
-                            <th>Invoice No</th>
-                            <th>Invoice Date</th>
-                            <th>Taxable Value (Rs)</th>
-                            <th>Central Tax (Rs)</th>
-                            <th>State/UT Tax (Rs)</th>
-                            <th>IGST (Rs)</th>
-                            <th>Invoice Value (Rs)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${rowsHtml}
-                    </tbody>
-                    ${filteredInvoices.length > 0 ? `
-                    <tfoot>
-                        <tr style="background-color: #f9fafb; font-weight: bold;">
-                            <td colspan="5" style="text-align: right; border: 1px solid black; padding: 5px;">TOTAL</td>
-                            <td style="text-align: right; border: 1px solid black; padding: 5px;">${formatCurrency(totalSub)}</td>
-                            <td style="text-align: right; border: 1px solid black; padding: 5px;">${formatCurrency(totalCgst)}</td>
-                            <td style="text-align: right; border: 1px solid black; padding: 5px;">${formatCurrency(totalSgst)}</td>
-                            <td style="text-align: right; border: 1px solid black; padding: 5px;">${formatCurrency(totalIgst)}</td>
-                            <td style="text-align: right; border: 1px solid black; padding: 5px;">${formatCurrency(totalAmt)}</td>
-                        </tr>
-                    </tfoot>` : ''}
-                </table>
-
-                <br/><br/><br/>
-                <table style="width: 100%; border: none; font-family: Arial, sans-serif; font-size: 12px; page-break-inside: avoid;">
-                    <tr>
-                        <td style="border: none; text-align: center; width: 33%;">
-                            _____________________<br/>Prepared By
-                        </td>
-                        <td style="border: none; text-align: center; width: 33%;">
-                            _____________________<br/>Audited By / Auditor
-                        </td>
-                        <td style="border: none; text-align: center; width: 33%;">
-                            <i>For SRINIVASA DYEING</i><br/><br/>_____________________<br/>Authorised Signatory
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            </body>
-            </html>
-        `;
-
-        fs.writeFileSync(filePath, htmlString, 'utf8');
-        console.log(`Auto-generated Word report: ${filePath}`);
-    } catch (e) {
-        console.error("Failed to auto generate word report:", e);
-    }
-};
-
-app.post('/api/save-pdf', upload.single('pdf'), (req, res) => {
-  if (!req.file) {
-    return res.status(400).send('No PDF file uploaded.');
-  }
-  console.log(`Successfully saved PDF to ${req.file.path}`);
-  const reportDateStr = req.body.date ? String(req.body.date) : new Date().toISOString();
-  setTimeout(() => {
-    autoGenerateWordReportForDate(reportDateStr);
-  }, 1500);
-  res.status(200).json({ message: 'PDF saved successfully', path: req.file.path });
+  if (error) return res.status(500).json(error);
+  res.json({ message: 'PDF saved to cloud', path: data.path });
 });
 
-app.post('/api/save-word-report', (req, res) => {
-  try {
-    const { html, monthStr } = req.body;
-    if (!html || !monthStr) return res.status(400).send('Missing html or monthStr');
-    let dir;
-    if (monthStr === 'All_Months') {
-        const fyFolder = getFinancialYear(new Date().toISOString());
-        dir = path.join(baseInvoicePath, fyFolder, 'All_Months_Reports');
-    } else {
-        const dateObj = new Date(`1 ${monthStr}`);
-        const dateStr = dateObj.toISOString();
-        const fyFolder = getFinancialYear(dateStr);
-        const monthFolder = getMonthFolderName(dateStr);
-        dir = path.join(baseInvoicePath, fyFolder, monthFolder);
-    }
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-    const filePath = path.join(dir, `Report_${monthStr.replace(' ', '_')}_${Date.now()}.doc`);
-    const wordHtml = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Monthly Report</title></head><body>${html}</body></html>`;
-    fs.writeFileSync(filePath, wordHtml, 'utf8');
-    res.status(200).json({ message: 'Report saved successfully', path: filePath });
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to save word report' });
-  }
-});
+app.post('/api/save-word-report', async (req, res) => {
+  const { html, monthStr } = req.body;
+  const wordHtml = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'></head><body>${html}</body></html>`;
+  
+  const fy = getFinancialYear(new Date().toISOString());
+  const filePath = `${fy}/Reports/Report_${monthStr.replace(' ', '_')}_${Date.now()}.doc`;
 
-// Database file paths
-const CUSTOMER_DB = path.join(__dirname, 'data', 'customerdb.json');
-const PRODUCT_DB = path.join(__dirname, 'data', 'productdb.json');
-const INVOICE_DB = path.join(__dirname, 'data', 'invoicedb.json');
+  const { data, error } = await supabase.storage
+    .from('invoices')
+    .upload(filePath, Buffer.from(wordHtml), { contentType: 'application/msword', upsert: true });
 
-const readDB = (filePath) => {
-  try {
-    if (!fs.existsSync(filePath)) return null;
-    return JSON.parse(fs.readFileSync(filePath, 'utf8'));
-  } catch (error) { return null; }
-};
-
-const writeDB = (filePath, data) => {
-  try {
-    fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
-    return true;
-  } catch (error) { return false; }
-};
-
-app.get('/customers', (req, res) => {
-  const db = readDB(CUSTOMER_DB);
-  res.json(db ? db.customers || [] : []);
-});
-
-app.post('/customers', (req, res) => {
-  const db = readDB(CUSTOMER_DB) || { customers: [] };
-  const newCustomer = req.body;
-  if (!newCustomer.id) newCustomer.id = `C${String(db.customers.length + 1).padStart(3, '0')}`;
-  db.customers.push(newCustomer);
-  if (writeDB(CUSTOMER_DB, db)) res.status(201).json(newCustomer);
-  else res.status(500).json({ error: 'Failed to save customer' });
-});
-
-app.get('/products', (req, res) => {
-  const db = readDB(PRODUCT_DB);
-  res.json(db ? db.products || [] : []);
-});
-
-app.post('/products', (req, res) => {
-  const db = readDB(PRODUCT_DB) || { products: [] };
-  const newProduct = req.body;
-  if (!newProduct.id) newProduct.id = `P${String(db.products.length + 1).padStart(3, '0')}`;
-  db.products.push(newProduct);
-  if (writeDB(PRODUCT_DB, db)) res.status(201).json(newProduct);
-  else res.status(500).json({ error: 'Failed to save product' });
-});
-
-app.get('/invoices', (req, res) => {
-  const db = readDB(INVOICE_DB);
-  res.json(db ? db.invoices || [] : []);
-});
-
-app.post('/invoices', (req, res) => {
-  const db = readDB(INVOICE_DB) || { invoices: [], settings: {} };
-  const newInvoice = req.body;
-  if (!newInvoice.id) newInvoice.id = Date.now().toString();
-  db.invoices.push(newInvoice);
-  if (writeDB(INVOICE_DB, db)) res.status(201).json(newInvoice);
-  else res.status(500).json({ error: 'Failed to save invoice' });
-});
-
-app.get('/settings', (req, res) => {
-  const db = readDB(INVOICE_DB);
-  res.json(db ? db.settings || {} : {});
-});
-
-app.patch('/settings', (req, res) => {
-  const db = readDB(INVOICE_DB) || { invoices: [], settings: {} };
-  db.settings = { ...db.settings, ...req.body };
-  if (writeDB(INVOICE_DB, db)) res.json(db.settings);
-  else res.status(500).json({ error: 'Failed to save settings' });
+  if (error) return res.status(500).json(error);
+  res.json({ message: 'Report saved to cloud', path: data.path });
 });
 
 app.get('*', (req, res) => {
@@ -340,5 +157,5 @@ app.get('*', (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`Server listening at http://localhost:${port}`);
+  console.log(`Professional Free Billing Server running on port ${port}`);
 });

@@ -13,7 +13,6 @@
     "server-products": "json-server --watch productdb.json --port 3003",
     "server-invoices": "json-server --watch invoicedb.json --port 3004",
     "start": "node server.js",
-    "dev": "vite",
     "electron-start": "concurrently \"npm run server-customers\" \"npm run server-products\" \"npm run server-invoices\" \"npm run express-server\" \"npm run dev\" \"wait-on tcp:3005 && cross-env NODE_ENV=development electron .\"",
     "electron-pack": "npm run build && electron-builder --win --x64"
   },
@@ -21,6 +20,7 @@
     "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-popover": "^1.1.15",
     "@radix-ui/react-tooltip": "^1.2.8",
+    "@supabase/supabase-js": "^2.105.4",
     "cors": "^2.8.6",
     "electron-is-dev": "^3.0.1",
     "express": "^5.2.1",
