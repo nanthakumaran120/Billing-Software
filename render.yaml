@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: srinivasa-billing
+    env: node
+    plan: starter # Starter plan is required for persistent disks
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: INVOICE_STORAGE_PATH
+        value: /opt/render/project/src/data/invoices
+    disk:
+      name: billing-data
+      mountPath: /opt/render/project/src/data
+      sizeGB: 1

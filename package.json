@@ -12,8 +12,8 @@
     "server-customers": "json-server --watch customerdb.json --port 3001",
     "server-products": "json-server --watch productdb.json --port 3003",
     "server-invoices": "json-server --watch invoicedb.json --port 3004",
-    "express-server": "node server.js",
-    "start": "concurrently \"npm run server-customers\" \"npm run server-products\" \"npm run server-invoices\" \"npm run express-server\" \"npm run dev\"",
+    "start": "node server.js",
+    "dev": "vite",
     "electron-start": "concurrently \"npm run server-customers\" \"npm run server-products\" \"npm run server-invoices\" \"npm run express-server\" \"npm run dev\" \"wait-on tcp:3005 && cross-env NODE_ENV=development electron .\"",
     "electron-pack": "npm run build && electron-builder --win --x64"
   },

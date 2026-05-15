@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:3002';
+const BASE_URL = window.location.origin;
 
 const CUSTOMERS_API_URL = BASE_URL;
 const PRODUCTS_API_URL = BASE_URL;

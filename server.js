@@ -9,10 +9,13 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const port = 3002;
+const port = process.env.PORT || 3002;
 
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
+
+// Serving static files from the 'dist' directory (frontend)
+app.use(express.static(path.join(__dirname, 'dist')));
 
 const getFinancialYear = (dateStr) => {
   const d = new Date(dateStr);
@@ -28,34 +31,26 @@ const getFinancialYear = (dateStr) => {
 const getMonthFolderName = (dateStr) => {
   const d = new Date(dateStr);
   const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-  const month = d.getMonth() + 1;
   const monthName = monthNames[d.getMonth()];
+  const month = d.getMonth() + 1;
   const year2 = d.getFullYear().toString().slice(-2);
-  // Format: 4-April-26
   return `${month}-${monthName}-${year2}`;
 };
 
-// Set up storage for multer
-// In production (Electron), INVOICE_STORAGE_PATH is set to a writable Documents subfolder.
-// In development, invoices are stored locally in the project's ./invoices folder.
-const baseInvoicePath = process.env.INVOICE_STORAGE_PATH || path.join(__dirname, 'invoices');
+// Consolidated storage path for persistence
+const baseInvoicePath = process.env.INVOICE_STORAGE_PATH || path.join(__dirname, 'data', 'invoices');
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     const dateStr = req.body.date || new Date().toISOString();
     const fyFolder = getFinancialYear(dateStr);
     const monthFolder = getMonthFolderName(dateStr);
-
     const dir = path.join(baseInvoicePath, fyFolder, monthFolder);
-
-    // Create the directory if it doesn't exist
     fs.mkdirSync(dir, { recursive: true });
-
     cb(null, dir);
   },
   filename: (req, file, cb) => {
     const invoiceNo = req.body.invoiceNo || 'Unknown';
-    // Replacing colon from 'Bill No :1' to 'Bill No 1' as Windows doesn't allow colons in filenames
     cb(null, `Bill No ${invoiceNo}.pdf`);
   }
 });
@@ -76,9 +71,7 @@ const autoGenerateWordReportForDate = (dateStr) => {
 
         const filePath = path.join(dir, `Report_${monthStr.replace(' ', '_')}.doc`);
 
-        // INVOICE_DB must be declared above if we use it here.
-        // It's declared below. Let me just use path.join(__dirname, 'invoicedb.json')
-        const invoiceDbPath = path.join(__dirname, 'invoicedb.json');
+        const invoiceDbPath = path.join(__dirname, 'data', 'invoicedb.json');
         let data = { invoices: [] };
         if (fs.existsSync(invoiceDbPath)) {
             data = JSON.parse(fs.readFileSync(invoiceDbPath, 'utf8') || '{"invoices":[]}');
@@ -237,26 +230,17 @@ app.post('/api/save-pdf', upload.single('pdf'), (req, res) => {
     return res.status(400).send('No PDF file uploaded.');
   }
   console.log(`Successfully saved PDF to ${req.file.path}`);
-  
-  // Safely extract date before timeout
   const reportDateStr = req.body.date ? String(req.body.date) : new Date().toISOString();
-  
-  // Wait 1.5 seconds to absolutely ensure json-server has flushed invoicedb.json to disk
   setTimeout(() => {
     autoGenerateWordReportForDate(reportDateStr);
   }, 1500);
-
   res.status(200).json({ message: 'PDF saved successfully', path: req.file.path });
 });
 
 app.post('/api/save-word-report', (req, res) => {
   try {
-    const { html, monthStr } = req.body; // e.g., monthStr = "May 2026"
-    if (!html || !monthStr) {
-      return res.status(400).send('Missing html or monthStr');
-    }
-
-    // Try to parse "May 2026" to generate the folder name. 
+    const { html, monthStr } = req.body;
+    if (!html || !monthStr) return res.status(400).send('Missing html or monthStr');
     let dir;
     if (monthStr === 'All_Months') {
         const fyFolder = getFinancialYear(new Date().toISOString());
@@ -268,58 +252,35 @@ app.post('/api/save-word-report', (req, res) => {
         const monthFolder = getMonthFolderName(dateStr);
         dir = path.join(baseInvoicePath, fyFolder, monthFolder);
     }
-
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
     const filePath = path.join(dir, `Report_${monthStr.replace(' ', '_')}_${Date.now()}.doc`);
-    
-    // We wrap the HTML in basic Word-compatible tags
-    const wordHtml = `
-      <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-      <head><meta charset='utf-8'><title>Monthly Report</title></head>
-      <body>${html}</body>
-      </html>
-    `;
-
+    const wordHtml = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Monthly Report</title></head><body>${html}</body></html>`;
     fs.writeFileSync(filePath, wordHtml, 'utf8');
-    console.log(`Successfully saved Word report to ${filePath}`);
     res.status(200).json({ message: 'Report saved successfully', path: filePath });
   } catch (error) {
-    console.error("Error saving word report:", error);
     res.status(500).json({ error: 'Failed to save word report' });
   }
 });
 
 // Database file paths
-const CUSTOMER_DB = path.join(__dirname, 'customerdb.json');
-const PRODUCT_DB = path.join(__dirname, 'productdb.json');
-const INVOICE_DB = path.join(__dirname, 'invoicedb.json');
+const CUSTOMER_DB = path.join(__dirname, 'data', 'customerdb.json');
+const PRODUCT_DB = path.join(__dirname, 'data', 'productdb.json');
+const INVOICE_DB = path.join(__dirname, 'data', 'invoicedb.json');
 
-// Helper to read JSON
 const readDB = (filePath) => {
   try {
-    const data = fs.readFileSync(filePath, 'utf8');
-    return JSON.parse(data);
-  } catch (error) {
-    console.error(`Error reading ${filePath}:`, error);
-    return null;
-  }
+    if (!fs.existsSync(filePath)) return null;
+    return JSON.parse(fs.readFileSync(filePath, 'utf8'));
+  } catch (error) { return null; }
 };
 
-// Helper to write JSON
 const writeDB = (filePath, data) => {
   try {
     fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
     return true;
-  } catch (error) {
-    console.error(`Error writing ${filePath}:`, error);
-    return false;
-  }
+  } catch (error) { return false; }
 };
 
-// --- CUSTOMERS API ---
 app.get('/customers', (req, res) => {
   const db = readDB(CUSTOMER_DB);
   res.json(db ? db.customers || [] : []);
@@ -328,18 +289,12 @@ app.get('/customers', (req, res) => {
 app.post('/customers', (req, res) => {
   const db = readDB(CUSTOMER_DB) || { customers: [] };
   const newCustomer = req.body;
-  if (!newCustomer.id) {
-    newCustomer.id = `C${String(db.customers.length + 1).padStart(3, '0')}`;
-  }
+  if (!newCustomer.id) newCustomer.id = `C${String(db.customers.length + 1).padStart(3, '0')}`;
   db.customers.push(newCustomer);
-  if (writeDB(CUSTOMER_DB, db)) {
-    res.status(201).json(newCustomer);
-  } else {
-    res.status(500).json({ error: 'Failed to save customer' });
-  }
+  if (writeDB(CUSTOMER_DB, db)) res.status(201).json(newCustomer);
+  else res.status(500).json({ error: 'Failed to save customer' });
 });
 
-// --- PRODUCTS API ---
 app.get('/products', (req, res) => {
   const db = readDB(PRODUCT_DB);
   res.json(db ? db.products || [] : []);
@@ -348,18 +303,12 @@ app.get('/products', (req, res) => {
 app.post('/products', (req, res) => {
   const db = readDB(PRODUCT_DB) || { products: [] };
   const newProduct = req.body;
-  if (!newProduct.id) {
-    newProduct.id = `P${String(db.products.length + 1).padStart(3, '0')}`;
-  }
+  if (!newProduct.id) newProduct.id = `P${String(db.products.length + 1).padStart(3, '0')}`;
   db.products.push(newProduct);
-  if (writeDB(PRODUCT_DB, db)) {
-    res.status(201).json(newProduct);
-  } else {
-    res.status(500).json({ error: 'Failed to save product' });
-  }
+  if (writeDB(PRODUCT_DB, db)) res.status(201).json(newProduct);
+  else res.status(500).json({ error: 'Failed to save product' });
 });
 
-// --- INVOICES API ---
 app.get('/invoices', (req, res) => {
   const db = readDB(INVOICE_DB);
   res.json(db ? db.invoices || [] : []);
@@ -368,21 +317,12 @@ app.get('/invoices', (req, res) => {
 app.post('/invoices', (req, res) => {
   const db = readDB(INVOICE_DB) || { invoices: [], settings: {} };
   const newInvoice = req.body;
-  if (!newInvoice.id) {
-    newInvoice.id = Date.now().toString();
-  }
-  if (!newInvoice.createdAt) {
-    newInvoice.createdAt = new Date().toISOString();
-  }
+  if (!newInvoice.id) newInvoice.id = Date.now().toString();
   db.invoices.push(newInvoice);
-  if (writeDB(INVOICE_DB, db)) {
-    res.status(201).json(newInvoice);
-  } else {
-    res.status(500).json({ error: 'Failed to save invoice' });
-  }
+  if (writeDB(INVOICE_DB, db)) res.status(201).json(newInvoice);
+  else res.status(500).json({ error: 'Failed to save invoice' });
 });
 
-// --- SETTINGS API ---
 app.get('/settings', (req, res) => {
   const db = readDB(INVOICE_DB);
   res.json(db ? db.settings || {} : {});
@@ -390,15 +330,15 @@ app.get('/settings', (req, res) => {
 
 app.patch('/settings', (req, res) => {
   const db = readDB(INVOICE_DB) || { invoices: [], settings: {} };
-  const updates = req.body;
-  db.settings = { ...db.settings, ...updates };
-  if (writeDB(INVOICE_DB, db)) {
-    res.json(db.settings);
-  } else {
-    res.status(500).json({ error: 'Failed to save settings' });
-  }
+  db.settings = { ...db.settings, ...req.body };
+  if (writeDB(INVOICE_DB, db)) res.json(db.settings);
+  else res.status(500).json({ error: 'Failed to save settings' });
+});
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
 app.listen(port, () => {
-  console.log(`Backend server listening at http://localhost:${port}`);
+  console.log(`Server listening at http://localhost:${port}`);
 });
