@@ -10,7 +10,6 @@ const ReportList = ({ onBack }) => {
     useEffect(() => {
         const loadData = async () => {
             const data = await fetchInvoices();
-            // Sort by invoice number ascending (Bill 7, 8, 9, 10...)
             const sortedData = data.sort((a, b) => {
                 const numA = parseInt(a.invoiceDetails?.invoiceNo) || 0;
                 const numB = parseInt(b.invoiceDetails?.invoiceNo) || 0;
@@ -19,7 +18,17 @@ const ReportList = ({ onBack }) => {
             setInvoices(sortedData);
             setLoading(false);
         };
+        
         loadData();
+
+        // Auto-refresh logic
+        window.addEventListener('focus', loadData);
+        const interval = setInterval(loadData, 15000); // 15s for reports
+
+        return () => {
+            window.removeEventListener('focus', loadData);
+            clearInterval(interval);
+        };
     }, []);
 
     const formatCurrency = (amount) => {
@@ -128,13 +137,14 @@ const ReportList = ({ onBack }) => {
                     
                     <div className="mt-6 pt-4 border-t border-gray-300 w-full flex justify-between items-end">
                         <div>
-                            <h2 className="text-xl font-bold uppercase text-gray-900">MONTHLY SALES / GST REPORT (GSTR-2B Format)</h2>
+                            <h2 className="text-xl font-bold uppercase text-gray-900">GST REPORT</h2>
                             <p className="text-sm font-semibold text-gray-600 mt-1">
                                 {selectedMonth === 'All' ? 'Complete Statement - All Invoices' : `Statement for the month of: ${selectedMonth}`}
                             </p>
                         </div>
                         <div className="text-right text-xs font-semibold text-gray-600">
                             <p>Date of Generation: {formatDate(new Date().toISOString())}</p>
+                            <p className="text-blue-600 italic no-print mt-1">✓ Report automatically updated from database</p>
                         </div>
                     </div>
                 </div>

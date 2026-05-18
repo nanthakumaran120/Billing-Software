@@ -148,7 +148,8 @@ function App() {
           pagebreak:    { mode: ['css', 'avoid-all'] }
       };
 
-      const pdfBlob = await html2pdf().set(opt).from(container).output('blob');
+      // Generate PDF of only the first paper (Original copy)
+      const pdfBlob = await html2pdf().set(opt).from(papers[0]).output('blob');
 
       // Restore original styles
       papers.forEach((el, index) => {

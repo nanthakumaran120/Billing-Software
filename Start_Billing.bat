@@ -1,4 +1,14 @@
 @echo off
+title Srinivasa Billing Server
+color 0b
+cls
+echo ===================================================
+echo       SRINIVASA BILLING APPLICATION SERVER
+echo ===================================================
+echo.
+echo Initializing servers... Please wait...
+echo.
+
 cd /d "D:\New folder\billing"
 
 :: ── Full path to npm (needed when launched via wscript/shortcut) ─────
@@ -8,23 +18,15 @@ set NPM="C:\Program Files\nodejs\npm.cmd"
 taskkill /F /IM node.exe >nul 2>&1
 
 :: ── Start all servers (npm start runs concurrently) ─────────────────
+:: Vite is configured to automatically open the browser once ready
 start /b cmd /c %NPM% start
 
-:: ── Poll until port 3005 is ready (checks every 1s, max 40 tries) ───
-set TRIES=0
-:WAIT_LOOP
-    set /a TRIES+=1
-    if %TRIES% GTR 40 goto TIMEOUT_OPEN
-    powershell -NoProfile -Command ^
-      "try{$c=New-Object Net.Sockets.TcpClient;$c.Connect('localhost',3005);$c.Close();exit 0}catch{exit 1}" >nul 2>&1
-    if %ERRORLEVEL%==0 goto OPEN_BROWSER
-    timeout /t 1 /nobreak >nul
-goto WAIT_LOOP
-
-:OPEN_BROWSER
-start http://localhost:3005
-exit /b 0
-
-:TIMEOUT_OPEN
-start http://localhost:3005
-exit /b 0
+echo.
+echo Application is starting. The browser will open automatically.
+echo.
+echo ===================================================
+echo   SERVER IS RUNNING. DO NOT CLOSE THIS WINDOW.
+echo   Closing this window will stop the application.
+echo ===================================================
+echo.
+pause

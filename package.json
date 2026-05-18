@@ -9,11 +9,12 @@
     "build": "vite build && node -e \"const fs=require('fs');let h=fs.readFileSync('dist/index.html','utf8');fs.writeFileSync('dist/index.html',h.replace(/ crossorigin/g,''));\"",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "server-customers": "json-server --watch customerdb.json --port 3001",
-    "server-products": "json-server --watch productdb.json --port 3003",
-    "server-invoices": "json-server --watch invoicedb.json --port 3004",
-    "start": "node server.js",
-    "electron-start": "concurrently \"npm run server-customers\" \"npm run server-products\" \"npm run server-invoices\" \"npm run express-server\" \"npm run dev\" \"wait-on tcp:3005 && cross-env NODE_ENV=development electron .\"",
+    "express-server": "node server.js",
+    "server-customers": "json-server --watch data/customerdb.json --port 3001",
+    "server-products": "json-server --watch data/productdb.json --port 3003",
+    "server-invoices": "json-server --watch data/invoicedb.json --port 3004",
+    "start": "concurrently \"npm run express-server\" \"npm run dev\"",
+    "electron-start": "concurrently \"npm run express-server\" \"npm run dev\" \"wait-on tcp:3005 && cross-env NODE_ENV=development electron .\"",
     "electron-pack": "npm run build && electron-builder --win --x64"
   },
   "dependencies": {

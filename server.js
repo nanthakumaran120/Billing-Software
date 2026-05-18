@@ -4,7 +4,6 @@ import multer from 'multer';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { createClient } from '@supabase/supabase-js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -12,18 +11,24 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const port = process.env.PORT || 3002;
 
-// Supabase Initialization
-const SUPABASE_URL = process.env.SUPABASE_URL;
-const SUPABASE_KEY = process.env.SUPABASE_ANON_KEY;
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
-
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.static(path.join(__dirname, 'dist')));
 
-// Memory storage for uploads
-const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
+// Prevent caching for API routes
+app.use((req, res, next) => {
+  if (req.path.startsWith('/api') || req.path === '/customers' || req.path === '/products' || req.path === '/invoices' || req.path === '/settings') {
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+  }
+  next();
+});
+
+// Helper to read/write JSON files
+const DB_PATH = path.join(__dirname, 'data');
+const readJSON = (file) => JSON.parse(fs.readFileSync(path.join(DB_PATH, file), 'utf8'));
+const writeJSON = (file, data) => fs.writeFileSync(path.join(DB_PATH, file), JSON.stringify(data, null, 2), 'utf8');
 
 const getFinancialYear = (dateStr) => {
   const d = new Date(dateStr);
@@ -46,116 +51,147 @@ const getMonthFolderName = (dateStr) => {
 };
 
 // --- CUSTOMERS API ---
-app.get('/customers', async (req, res) => {
-  const { data, error } = await supabase.from('customers').select('*');
-  if (error) return res.status(500).json(error);
-  res.json(data || []);
+app.get('/customers', (req, res) => {
+  try {
+    const db = readJSON('customerdb.json');
+    res.json(db.customers || []);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
 });
 
-app.post('/customers', async (req, res) => {
-  const { data, error } = await supabase.from('customers').upsert(req.body).select();
-  if (error) return res.status(500).json(error);
-  res.status(201).json(data[0]);
+app.post('/customers', (req, res) => {
+  try {
+    const db = readJSON('customerdb.json');
+    const customer = req.body;
+    const index = db.customers.findIndex(c => c.id === customer.id);
+    if (index > -1) {
+      db.customers[index] = customer;
+    } else {
+      db.customers.push(customer);
+    }
+    writeJSON('customerdb.json', db);
+    res.status(201).json(customer);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
 });
 
 // --- PRODUCTS API ---
-app.get('/products', async (req, res) => {
-  const { data, error } = await supabase.from('products').select('*');
-  if (error) return res.status(500).json(error);
-  res.json(data || []);
+app.get('/products', (req, res) => {
+  try {
+    const db = readJSON('productdb.json');
+    res.json(db.products || []);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
 });
 
-app.post('/products', async (req, res) => {
-  const { data, error } = await supabase.from('products').upsert(req.body).select();
-  if (error) return res.status(500).json(error);
-  res.status(201).json(data[0]);
+app.post('/products', (req, res) => {
+  try {
+    const db = readJSON('productdb.json');
+    const product = req.body;
+    const index = db.products.findIndex(p => p.id === product.id);
+    if (index > -1) {
+      db.products[index] = product;
+    } else {
+      db.products.push(product);
+    }
+    writeJSON('productdb.json', db);
+    res.status(201).json(product);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
 });
 
 // --- INVOICES API ---
-app.get('/invoices', async (req, res) => {
-  const { data, error } = await supabase.from('invoices').select('*').order('created_at', { ascending: false });
-  if (error) return res.status(500).json(error);
-  
-  // Map Supabase fields to the format the frontend expects
-  const mappedData = data.map(inv => ({
-    id: inv.id,
-    customer: inv.customer_data,
-    items: inv.items,
-    invoiceDetails: inv.invoice_details,
-    totalAmount: inv.total_amount,
-    createdAt: inv.created_at
-  }));
-  res.json(mappedData);
+app.get('/invoices', (req, res) => {
+  try {
+    const db = readJSON('invoicedb.json');
+    res.json(db.invoices || []);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
 });
 
-app.post('/invoices', async (req, res) => {
-  const inv = req.body;
-  const { data, error } = await supabase.from('invoices').insert({
-    id: inv.id || Date.now().toString(),
-    customer_id: inv.customer?.id,
-    customer_data: inv.customer,
-    items: inv.items,
-    invoice_details: inv.invoiceDetails,
-    total_amount: inv.totalAmount || 0
-  }).select();
-  
-  if (error) return res.status(500).json(error);
-  res.status(201).json(data[0]);
+app.post('/invoices', (req, res) => {
+  try {
+    const db = readJSON('invoicedb.json');
+    const invoice = req.body;
+    db.invoices.push(invoice);
+    
+    // Update next invoice number
+    if (db.settings) {
+      db.settings.nextInvoiceNo = (parseInt(invoice.invoiceDetails?.invoiceNo) || 0) + 1;
+    }
+    
+    writeJSON('invoicedb.json', db);
+    res.status(201).json(invoice);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
 });
 
 // --- SETTINGS API ---
-app.get('/settings', async (req, res) => {
-  const { data, error } = await supabase.from('settings').select('*');
-  if (error) return res.status(500).json(error);
-  const settings = {};
-  data.forEach(s => settings[s.key] = s.value);
-  res.json(settings);
+app.get('/settings', (req, res) => {
+  try {
+    const db = readJSON('invoicedb.json');
+    res.json(db.settings || {});
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
 });
 
-app.patch('/settings', async (req, res) => {
-  const updates = req.body;
-  for (const key in updates) {
-    await supabase.from('settings').upsert({ key, value: updates[key] });
+app.patch('/settings', (req, res) => {
+  try {
+    const db = readJSON('invoicedb.json');
+    db.settings = { ...db.settings, ...req.body };
+    writeJSON('invoicedb.json', db);
+    res.json({ message: 'Settings updated' });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
   }
-  res.json({ message: 'Settings updated' });
 });
 
 // --- PDF & WORD STORAGE ---
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const { date } = req.body;
+    const fy = getFinancialYear(date || new Date().toISOString());
+    const month = getMonthFolderName(date || new Date().toISOString());
+    const dir = path.join(__dirname, 'invoices', fy, month);
+    fs.mkdirSync(dir, { recursive: true });
+    cb(null, dir);
+  },
+  filename: (req, file, cb) => {
+    const { invoiceNo } = req.body;
+    cb(null, `Bill No ${invoiceNo}.pdf`);
+  }
+});
+const upload = multer({ storage: storage });
 
-app.post('/api/save-pdf', upload.single('pdf'), async (req, res) => {
+app.post('/api/save-pdf', upload.single('pdf'), (req, res) => {
   if (!req.file) return res.status(400).send('No file uploaded.');
-  const { invoiceNo, date } = req.body;
-  const fy = getFinancialYear(date || new Date().toISOString());
-  const month = getMonthFolderName(date || new Date().toISOString());
-  const filePath = `${fy}/${month}/Bill No ${invoiceNo}.pdf`;
-
-  const { data, error } = await supabase.storage
-    .from('invoices')
-    .upload(filePath, req.file.buffer, { contentType: 'application/pdf', upsert: true });
-
-  if (error) return res.status(500).json(error);
-  res.json({ message: 'PDF saved to cloud', path: data.path });
+  res.json({ message: 'PDF saved locally', path: req.file.path });
 });
 
-app.post('/api/save-word-report', async (req, res) => {
+app.post('/api/save-word-report', (req, res) => {
   const { html, monthStr } = req.body;
   const wordHtml = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'></head><body>${html}</body></html>`;
   
   const fy = getFinancialYear(new Date().toISOString());
-  const filePath = `${fy}/Reports/Report_${monthStr.replace(' ', '_')}_${Date.now()}.doc`;
+  const dir = path.join(__dirname, 'invoices', fy, 'Reports');
+  fs.mkdirSync(dir, { recursive: true });
+  const filePath = path.join(dir, `Report_${monthStr.replace(' ', '_')}_${Date.now()}.doc`);
 
-  const { data, error } = await supabase.storage
-    .from('invoices')
-    .upload(filePath, Buffer.from(wordHtml), { contentType: 'application/msword', upsert: true });
-
-  if (error) return res.status(500).json(error);
-  res.json({ message: 'Report saved to cloud', path: data.path });
+  fs.writeFileSync(filePath, wordHtml, 'utf8');
+  res.json({ message: 'Report saved locally', path: filePath });
 });
 
-app.get('*', (req, res) => {
+app.get(/^(.*)$/, (req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
 app.listen(port, () => {
-  console.log(`Professional Free Billing Server running on port ${port}`);
+  console.log(`Local Billing Server running on port ${port}`);
 });

@@ -9,6 +9,17 @@ const CustomerSection = ({ customer, setCustomer, invoiceDetails, setInvoiceDeta
 
     useEffect(() => {
         loadCustomerData();
+        
+        // Refresh when window gets focus (e.g., coming back from another tab/folder)
+        window.addEventListener('focus', loadCustomerData);
+        
+        // Background polling every 10 seconds
+        const interval = setInterval(loadCustomerData, 10000);
+        
+        return () => {
+            window.removeEventListener('focus', loadCustomerData);
+            clearInterval(interval);
+        };
     }, []);
 
     const loadCustomerData = async () => {
@@ -45,15 +56,7 @@ const CustomerSection = ({ customer, setCustomer, invoiceDetails, setInvoiceDeta
         c.name.toLowerCase().includes((customer.name || '').toLowerCase())
     );
 
-    const uniqueCustomers = [];
-    const seenNames = new Set();
-    for (const c of rawFilteredCustomers) {
-        const lowerName = c.name.toLowerCase();
-        if (!seenNames.has(lowerName)) {
-            seenNames.add(lowerName);
-            uniqueCustomers.push(c);
-        }
-    }
+    const uniqueCustomers = rawFilteredCustomers;
     
     const displayCustomers = uniqueCustomers.slice(0, maxItems);
     const hasMore = uniqueCustomers.length > maxItems;
