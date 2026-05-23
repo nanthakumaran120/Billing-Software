@@ -129,48 +129,61 @@ function App() {
 
     try {
       // 2. Save entire invoice to db for auditing
-      await saveInvoice(invoiceData);
+      try {
+        await saveInvoice(invoiceData);
+      } catch (error) {
+        console.log(error);
+      }
 
-      // 3. Generate PDF and upload to Backend Server
-      const container = document.getElementById('pdf-container');
-      const papers = container.querySelectorAll('.invoice-paper');
+      // 3. Generate PDF and upload to Backend Server (Temporarily disabled/commented out for Vercel deployment)
+      /*
+      try {
+        const container = document.getElementById('pdf-container');
+        const papers = container.querySelectorAll('.invoice-paper');
 
-      const origStyles = [];
-      papers.forEach(el => {
-        origStyles.push({ minHeight: el.style.minHeight, height: el.style.height, margin: el.style.margin });
-        // Temporarily constrain height so html2pdf doesn't generate a blank 2nd page per copy
-        el.style.minHeight = 'auto';
-        el.style.height = '295mm'; // Slightly less than A4 to ensure no overflow
-        el.style.margin = '0'; // Prevent on-screen margin from generating blank PDF pages
-      });
+        const origStyles = [];
+        papers.forEach(el => {
+          origStyles.push({ minHeight: el.style.minHeight, height: el.style.height, margin: el.style.margin });
+          el.style.minHeight = 'auto';
+          el.style.height = '295mm'; // Slightly less than A4 to ensure no overflow
+          el.style.margin = '0'; // Prevent on-screen margin from generating blank PDF pages
+        });
 
-      const opt = {
-          margin:       0,
-          filename:     `Bill No ${invoiceDetails.invoiceNo}.pdf`,
-          image:        { type: 'jpeg', quality: 1.0 },
-          html2canvas:  { scale: 4, useCORS: true, logging: false },
-          jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
-          pagebreak:    { mode: ['css', 'avoid-all'] }
-      };
+        const opt = {
+            margin:       0,
+            filename:     `Bill No ${invoiceDetails.invoiceNo}.pdf`,
+            image:        { type: 'jpeg', quality: 1.0 },
+            html2canvas:  { scale: 4, useCORS: true, logging: false },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+            pagebreak:    { mode: ['css', 'avoid-all'] }
+        };
 
-      // Generate PDF of only the first paper (Original copy)
-      const pdfBlob = await html2pdf().set(opt).from(papers[0]).output('blob');
+        // Generate PDF of only the first paper (Original copy)
+        const pdfBlob = await html2pdf().set(opt).from(papers[0]).output('blob');
 
-      // Restore original styles
-      papers.forEach((el, index) => {
-        el.style.minHeight = origStyles[index].minHeight;
-        el.style.height = origStyles[index].height;
-        el.style.margin = origStyles[index].margin;
-      });
-      
-      // Wait for it to save to the designated folder
-      await uploadPDFToServer(pdfBlob, invoiceDetails.invoiceNo, customer.name, invoiceDetails.date);
+        // Restore original styles
+        papers.forEach((el, index) => {
+          el.style.minHeight = origStyles[index].minHeight;
+          el.style.height = origStyles[index].height;
+          el.style.margin = origStyles[index].margin;
+        });
+        
+        // Wait for it to save to the designated folder
+        await uploadPDFToServer(pdfBlob, invoiceDetails.invoiceNo, customer.name, invoiceDetails.date);
+      } catch (pdfError) {
+        console.log("PDF generation/upload failed:", pdfError);
+      }
+      */
 
       // 4. Increment invoice number in settings
       const currentNo = parseInt(invoiceDetails.invoiceNo) || 0;
       if (currentNo > 0) {
         const nextNo = currentNo + 1;
-        await saveSettings({ nextInvoiceNo: nextNo });
+        try {
+          await saveSettings({ nextInvoiceNo: nextNo });
+        } catch (settingsError) {
+          console.log(settingsError);
+        }
       }
       
       // Notify other tabs (like the Report List on a second monitor) to update instantly
@@ -190,7 +203,7 @@ function App() {
 
     } catch (e) {
       console.error("Failed to save invoice or PDF", e);
-      alert("Warning: Could not save invoice/PDF correctly. Check the console.");
+      alert("Warning: Could not save invoice correctly. Check the console.");
     } finally {
       setIsSaving(false);
     }
