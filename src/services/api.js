@@ -1,4 +1,4 @@
-const isElectron = typeof window !== 'undefined' && 
+export const isElectron = typeof window !== 'undefined' && 
   (window.location.protocol === 'file:' || window.navigator.userAgent.toLowerCase().includes('electron'));
 
 const API_BASE = isElectron

@@ -35,7 +35,7 @@ const getFinancialYear = (dateStr) => {
 
 const getMonthFolderName = (dateStr) => {
   const d = new Date(dateStr);
-  const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   const monthName = monthNames[d.getMonth()];
   const month = d.getMonth() + 1;
   const year2 = d.getFullYear().toString().slice(-2);

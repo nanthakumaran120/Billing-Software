@@ -8,7 +8,7 @@ import SummarySection from './components/SummarySection';
 import ReportList from './components/ReportList';
 import CancelBill from './components/CancelBill';
 import Login from './components/Login';
-import { fetchSettings, saveSettings, saveInvoice, uploadPDFToServer } from './services/api';
+import { fetchSettings, saveSettings, saveInvoice, uploadPDFToServer, isElectron } from './services/api';
 
 const getFinancialYear = (dateStr) => {
   const d = new Date(dateStr);
@@ -174,16 +174,22 @@ function App() {
           const res = await uploadPDFToServer(pdfBlob, invoiceDetails.invoiceNo, customer.name, invoiceDetails.date);
           console.log("PDF saved", res);
           
-          // Fallback: If saved in serverless /tmp folder, trigger automated client-side browser download
-          if (res && res.isServerless) {
-            console.log("Serverless Vercel environment detected. Initiating local browser download fallback.");
-            html2pdf().set(opt).from(papers[0]).save();
+          if (!isElectron) {
+            // Fallback: If saved in serverless /tmp folder, trigger automated client-side browser download
+            if (res && res.isServerless) {
+              console.log("Serverless Vercel environment detected. Initiating local browser download fallback.");
+              html2pdf().set(opt).from(papers[0]).save();
+            }
           }
         } catch (uploadError) {
-          console.warn("PDF upload to server failed. Falling back to local browser download:", uploadError);
-          // If server upload throws network exception, automatically trigger direct browser download
-          html2pdf().set(opt).from(papers[0]).save();
-          alert(`Warning: Server PDF storage failed. The invoice PDF has been downloaded directly to your computer instead.`);
+          console.warn("PDF upload to server failed:", uploadError);
+          if (!isElectron) {
+            // If server upload throws network exception on Web, automatically trigger direct browser download
+            html2pdf().set(opt).from(papers[0]).save();
+            alert(`Warning: Server PDF storage failed. The invoice PDF has been downloaded directly to your computer instead.`);
+          } else {
+            alert(`Error: Silent PDF storage failed. Check if local server is running.`);
+          }
         }
       } catch (pdfError) {
         console.error("PDF generation crashed:", pdfError);
@@ -210,8 +216,10 @@ function App() {
         console.warn('BroadcastChannel not supported', err);
       }
 
-      // 5. Trigger print prompt (as requested)
-      window.print();
+      // 5. Trigger print prompt (only on Web environment)
+      if (!isElectron) {
+        window.print();
+      }
 
       // 7. Reset form for new bill
       resetForm();
