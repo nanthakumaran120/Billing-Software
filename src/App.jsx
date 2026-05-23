@@ -6,6 +6,8 @@ import CustomerSection from './components/CustomerSection';
 import ProductTable from './components/ProductTable';
 import SummarySection from './components/SummarySection';
 import ReportList from './components/ReportList';
+import CancelBill from './components/CancelBill';
+import Login from './components/Login';
 import { fetchSettings, saveSettings, saveInvoice, uploadPDFToServer } from './services/api';
 
 const getFinancialYear = (dateStr) => {
@@ -20,6 +22,9 @@ const getFinancialYear = (dateStr) => {
 };
 
 function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    sessionStorage.getItem('isAuthenticated') === 'true'
+  );
   const [currentView, setCurrentView] = useState('invoice'); // 'invoice' or 'reports'
   const [invoiceDetails, setInvoiceDetails] = useState({
     invoiceNo: '',
@@ -168,6 +173,15 @@ function App() {
         await saveSettings({ nextInvoiceNo: nextNo });
       }
       
+      // Notify other tabs (like the Report List on a second monitor) to update instantly
+      try {
+        const channel = new BroadcastChannel('invoice_updates');
+        channel.postMessage('new_invoice');
+        channel.close();
+      } catch (err) {
+        console.warn('BroadcastChannel not supported', err);
+      }
+
       // 5. Trigger print prompt (as requested)
       window.print();
 
@@ -182,8 +196,21 @@ function App() {
     }
   };
 
+  const handleLogin = () => {
+    setIsAuthenticated(true);
+    sessionStorage.setItem('isAuthenticated', 'true');
+  };
+
+  if (!isAuthenticated) {
+    return <Login onLogin={handleLogin} />;
+  }
+
   if (currentView === 'reports') {
     return <ReportList onBack={() => setCurrentView('invoice')} />;
+  }
+
+  if (currentView === 'cancel-bill') {
+    return <CancelBill onBack={() => setCurrentView('invoice')} />;
   }
 
   return (
@@ -191,6 +218,12 @@ function App() {
 
       {/* Action Bar */}
       <div className="action-bar no-print">
+        <button
+          onClick={() => setCurrentView('cancel-bill')}
+          className="btn-danger-solid mr-auto"
+        >
+          Cancel Bill
+        </button>
         {!isPreviewMode ? (
           <>
             <button

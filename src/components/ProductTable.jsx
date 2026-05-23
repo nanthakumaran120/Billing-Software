@@ -11,6 +11,17 @@ const ProductTable = ({ items, setItems, isPreviewMode }) => {
 
     useEffect(() => {
         loadProductData();
+        
+        // Refresh when window gets focus
+        window.addEventListener('focus', loadProductData);
+        
+        // Background polling every 10 seconds
+        const interval = setInterval(loadProductData, 10000);
+        
+        return () => {
+            window.removeEventListener('focus', loadProductData);
+            clearInterval(interval);
+        };
     }, []);
 
     const loadProductData = async () => {
@@ -43,7 +54,7 @@ const ProductTable = ({ items, setItems, isPreviewMode }) => {
             newItems[index] = {
                 ...newItems[index],
                 ...exactMatch,
-                amount: (exactMatch.rate * (parseFloat(newItems[index].qty) || 0)).toFixed(2)
+                amount: exactMatch.rate ? (exactMatch.rate * (parseFloat(newItems[index].qty) || 0)).toFixed(2) : ""
             };
             setProductSearch(prev => ({ ...prev, [index]: exactMatch.description }));
         }
@@ -55,7 +66,7 @@ const ProductTable = ({ items, setItems, isPreviewMode }) => {
         newItems[index] = {
             ...newItems[index],
             ...product,
-            amount: (product.rate * (parseFloat(newItems[index].qty) || 0)).toFixed(2)
+            amount: product.rate ? (product.rate * (parseFloat(newItems[index].qty) || 0)).toFixed(2) : ""
         };
         setItems(newItems);
         setProductSearch(prev => ({ ...prev, [index]: product.description }));
@@ -74,9 +85,15 @@ const ProductTable = ({ items, setItems, isPreviewMode }) => {
 
         // Recalculate amount if rate or qty changes
         if (field === 'qty' || field === 'rate') {
-            const qty = parseFloat(newItems[index].qty) || 0;
-            const rate = parseFloat(newItems[index].rate) || 0;
-            newItems[index].amount = (qty * rate).toFixed(2);
+            const qtyStr = String(newItems[index].qty).trim();
+            const rateStr = String(newItems[index].rate).trim();
+            if (qtyStr !== "" && rateStr !== "") {
+                const qty = parseFloat(qtyStr) || 0;
+                const rate = parseFloat(rateStr) || 0;
+                newItems[index].amount = (qty * rate).toFixed(2);
+            } else {
+                newItems[index].amount = "";
+            }
         }
 
         setItems(newItems);
@@ -182,7 +199,7 @@ const ProductTable = ({ items, setItems, isPreviewMode }) => {
                                                             >
                                                                 <span className="title">{p.description}</span>
                                                                 <span className="subtitle">
-                                                                    HSN: {p.hsn || '—'} &nbsp;|&nbsp; Rate: ₹{p.rate} / {p.per}
+                                                                    HSN: {p.hsn || '—'} &nbsp;|&nbsp; Rate: {p.rate ? `₹${p.rate}` : 'Manual'} / {p.per}
                                                                 </span>
                                                             </li>
                                                         ))
@@ -209,11 +226,18 @@ const ProductTable = ({ items, setItems, isPreviewMode }) => {
                                         type="number"
                                         value={item.qty}
                                         onChange={(e) => handleChange(index, 'qty', e.target.value)}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter') {
+                                                const rateInput = document.getElementById(`rate-${index}`);
+                                                if (rateInput) rateInput.focus();
+                                            }
+                                        }}
                                         className="text-center font-medium text-gray-800 w-full"
                                     />
                                 </td>
                                 <td className="border-r border-gray-400">
                                     <input
+                                        id={`rate-${index}`}
                                         type="number"
                                         value={item.rate}
                                         onChange={(e) => handleChange(index, 'rate', e.target.value)}

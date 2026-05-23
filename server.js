@@ -132,6 +132,23 @@ app.post('/invoices', (req, res) => {
   }
 });
 
+app.patch('/invoices/:id', (req, res) => {
+  try {
+    const db = readJSON('invoicedb.json');
+    const id = req.params.id;
+    const index = db.invoices.findIndex(inv => inv.id === id);
+    if (index > -1) {
+      db.invoices[index] = { ...db.invoices[index], ...req.body };
+      writeJSON('invoicedb.json', db);
+      res.status(200).json(db.invoices[index]);
+    } else {
+      res.status(404).json({ error: 'Invoice not found' });
+    }
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 // --- SETTINGS API ---
 app.get('/settings', (req, res) => {
   try {
@@ -186,6 +203,17 @@ app.post('/api/save-word-report', (req, res) => {
 
   fs.writeFileSync(filePath, wordHtml, 'utf8');
   res.json({ message: 'Report saved locally', path: filePath });
+});
+
+// --- AUTH API ---
+app.post('/api/login', (req, res) => {
+  const { username, password } = req.body;
+  // Simple hardcoded check for now, can be changed later
+  if (username === 'admin' && password === 'admin') {
+    res.json({ success: true, message: 'Logged in successfully' });
+  } else {
+    res.status(401).json({ success: false, message: 'Invalid username or password' });
+  }
 });
 
 app.get(/^(.*)$/, (req, res) => {

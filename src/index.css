@@ -618,6 +618,10 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   margin-right: 1rem;
 }
 
+.mr-auto {
+  margin-right: auto;
+}
+
 /* ═══════════════════════════════════════
    BUTTONS  —  3-D Tile Push Style
    Matches the reference: bright blue tile
@@ -697,6 +701,31 @@ button {
   box-shadow:
     1px 1px 0px 0px rgba(255,255,255,0.8),
     2px 2px 0px 0px rgba(30, 64, 175, 0.15);
+  transform: translate(3px, 3px);
+}
+
+/* ── Danger Solid (red tile) ── */
+.btn-danger-solid {
+  background: #dc2626;
+  color: #ffffff;
+  box-shadow:
+    4px 4px 0px 0px rgba(255,255,255,0.85),
+    6px 6px 0px 0px rgba(120, 15, 15, 0.35);
+}
+
+.btn-danger-solid:hover {
+  background: #ef4444;
+  box-shadow:
+    5px 5px 0px 0px rgba(255,255,255,0.9),
+    8px 8px 0px 0px rgba(120, 15, 15, 0.3);
+  transform: translate(-1px, -1px);
+}
+
+.btn-danger-solid:active {
+  background: #b91c1c;
+  box-shadow:
+    1px 1px 0px 0px rgba(255,255,255,0.6),
+    2px 2px 0px 0px rgba(120, 15, 15, 0.25);
   transform: translate(3px, 3px);
 }
 

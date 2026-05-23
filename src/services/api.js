@@ -5,7 +5,7 @@ const PRODUCTS_API_URL = BASE_URL;
 const INVOICES_API_URL = BASE_URL;
 
 export const fetchCustomers = async () => {
-    const response = await fetch(`${CUSTOMERS_API_URL}/customers`);
+    const response = await fetch(`${CUSTOMERS_API_URL}/customers?_t=${Date.now()}`);
     return response.json();
 };
 
@@ -19,7 +19,7 @@ export const createCustomer = async (customer) => {
 };
 
 export const fetchProducts = async () => {
-    const response = await fetch(`${PRODUCTS_API_URL}/products`);
+    const response = await fetch(`${PRODUCTS_API_URL}/products?_t=${Date.now()}`);
     return response.json();
 };
 
@@ -51,7 +51,7 @@ export const saveSettings = async (settingsUpdates) => {
 
 export const fetchInvoices = async () => {
     try {
-        const response = await fetch(`${INVOICES_API_URL}/invoices`);
+        const response = await fetch(`${INVOICES_API_URL}/invoices?_t=${Date.now()}`);
         return await response.json();
     } catch (e) {
         console.error("Failed to fetch invoices", e);
@@ -69,6 +69,23 @@ export const saveInvoice = async (invoiceData) => {
         return response.json();
     } catch (e) {
         console.error("Failed to save full invoice", e);
+        throw e;
+    }
+};
+
+export const cancelInvoice = async (id) => {
+    try {
+        const response = await fetch(`${INVOICES_API_URL}/invoices/${id}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: 'cancelled' })
+        });
+        if (!response.ok) {
+            throw new Error('Failed to cancel invoice');
+        }
+        return await response.json();
+    } catch (e) {
+        console.error("Failed to cancel invoice", e);
         throw e;
     }
 };
@@ -114,5 +131,20 @@ export const saveWordReport = async (htmlContent, monthStr) => {
     } catch (e) {
         console.error("Failed to save Word report to server", e);
         throw e;
+    }
+};
+
+export const loginUser = async (username, password) => {
+    try {
+        const response = await fetch(`${BASE_URL}/api/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password })
+        });
+        
+        return await response.json();
+    } catch (e) {
+        console.error("Login failed", e);
+        return { success: false, message: "Network error" };
     }
 };

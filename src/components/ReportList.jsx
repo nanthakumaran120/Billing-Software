@@ -24,10 +24,24 @@ const ReportList = ({ onBack }) => {
         // Auto-refresh logic
         window.addEventListener('focus', loadData);
         const interval = setInterval(loadData, 15000); // 15s for reports
+        
+        // Instant sync across tabs
+        let channel;
+        try {
+            channel = new BroadcastChannel('invoice_updates');
+            channel.onmessage = (event) => {
+                if (event.data === 'new_invoice') {
+                    loadData();
+                }
+            };
+        } catch (e) {
+            console.warn('BroadcastChannel not supported', e);
+        }
 
         return () => {
             window.removeEventListener('focus', loadData);
             clearInterval(interval);
+            if (channel) channel.close();
         };
     }, []);
 
@@ -42,6 +56,10 @@ const ReportList = ({ onBack }) => {
     };
 
     const processInvoice = (inv) => {
+        if (inv.status === 'cancelled') {
+            return { subtotal: 0, cgst: 0, sgst: 0, igst: 0, totalAmount: 0 };
+        }
+        
         const items = inv.items || [];
         const customer = inv.customer || {};
         const stateCode = customer.stateCode || '';
@@ -170,10 +188,9 @@ const ReportList = ({ onBack }) => {
                 <table className="report-table w-full text-xs text-left border-collapse border border-gray-400">
                     <thead className="table-header bg-gray-100">
                         <tr>
-                            <th className="border border-gray-400 p-2 font-bold text-gray-800 text-center w-12">S.No</th>
+                            <th className="border border-gray-400 p-2 font-bold text-gray-800 text-center w-20">Invoice No</th>
                             <th className="border border-gray-400 p-2 font-bold text-gray-800">GSTIN of supplier/buyer</th>
                             <th className="border border-gray-400 p-2 font-bold text-gray-800">Trade/Legal name</th>
-                            <th className="border border-gray-400 p-2 font-bold text-gray-800 text-center">Invoice No</th>
                             <th className="border border-gray-400 p-2 font-bold text-gray-800 text-center">Invoice Date</th>
                             <th className="border border-gray-400 p-2 font-bold text-gray-800 text-right">Taxable Value (₹)</th>
                             <th className="border border-gray-400 p-2 font-bold text-gray-800 text-right">Central Tax (₹)</th>
@@ -185,7 +202,7 @@ const ReportList = ({ onBack }) => {
                     <tbody>
                         {filteredInvoices.length === 0 ? (
                             <tr>
-                                <td colSpan="10" className="border border-gray-400 p-4 text-center text-gray-500">No invoices found.</td>
+                                <td colSpan="9" className="border border-gray-400 p-4 text-center text-gray-500">No invoices found.</td>
                             </tr>
                         ) : (
                             filteredInvoices.map((inv, index) => {
@@ -194,11 +211,18 @@ const ReportList = ({ onBack }) => {
                                 const customer = inv.customer || {};
 
                                 return (
-                                    <tr key={inv.id || index} className="hover:bg-gray-50">
-                                        <td className="border border-gray-400 p-2 text-center text-gray-700">{index + 1}</td>
-                                        <td className="border border-gray-400 p-2 text-gray-800 font-medium uppercase">{customer.gstin || '-'}</td>
-                                        <td className="border border-gray-400 p-2 text-gray-800 font-bold uppercase">{customer.name || '-'}</td>
-                                        <td className="border border-gray-400 p-2 text-center text-gray-800">{invDetails.invoiceNo || '-'}</td>
+                                    <tr key={inv.id || index} className={`hover:bg-gray-50 ${inv.status === 'cancelled' ? 'bg-red-50 text-red-800 opacity-75' : ''}`}>
+                                        <td className="border border-gray-400 p-2 text-center font-bold relative">
+                                            {invDetails.invoiceNo || '-'}
+                                            {inv.status === 'cancelled' && (
+                                                <div className="text-[10px] text-red-600 uppercase tracking-tighter absolute bottom-0 left-0 w-full text-center">Cancelled</div>
+                                            )}
+                                        </td>
+                                        <td className="border border-gray-400 p-2 font-medium uppercase">{customer.gstin || '-'}</td>
+                                        <td className="border border-gray-400 p-2 font-bold uppercase">
+                                            {customer.name || '-'}
+                                            {inv.status === 'cancelled' && <span className="ml-2 text-red-600 line-through text-xs">VOID</span>}
+                                        </td>
                                         <td className="border border-gray-400 p-2 text-center text-gray-800">{formatDate(invDetails.date)}</td>
                                         <td className="border border-gray-400 p-2 text-right text-gray-800">{formatCurrency(details.subtotal)}</td>
                                         <td className="border border-gray-400 p-2 text-right text-gray-800">{formatCurrency(details.cgst)}</td>
@@ -213,7 +237,7 @@ const ReportList = ({ onBack }) => {
                     {filteredInvoices.length > 0 && (
                         <tfoot className="bg-gray-50 font-bold">
                             <tr>
-                                <td colSpan="5" className="border border-gray-400 p-2 text-right text-gray-900 uppercase">Total</td>
+                                <td colSpan="4" className="border border-gray-400 p-2 text-right text-gray-900 uppercase">Total</td>
                                 <td className="border border-gray-400 p-2 text-right text-gray-900">
                                     {formatCurrency(filteredInvoices.reduce((acc, inv) => acc + processInvoice(inv).subtotal, 0))}
                                 </td>

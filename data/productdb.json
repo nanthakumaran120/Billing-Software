@@ -4,35 +4,168 @@
       "id": "P001",
       "description": "Plain Towels 35x70",
       "hsn": "6304",
-      "rate": 102,
+      "rate": "",
       "per": "Nos"
     },
     {
       "id": "P002",
       "description": "Plain Towels 30x60(saada)",
       "hsn": "6304",
-      "rate": 62,
+      "rate": "",
       "per": "Nos"
     },
     {
       "id": "P003",
-      "description": "Cool White Plain 30x60",
+      "description": "White checked 30x60",
       "hsn": "6304",
-      "rate": 60,
+      "rate": "",
       "per": "Nos"
     },
     {
       "id": "P004",
-      "description": "Cool colour Plain 30x60",
+      "description": "Cool White Plain 30x60",
       "hsn": "6304",
-      "rate": 61.5,
+      "rate": "",
       "per": "Nos"
     },
     {
       "id": "P005",
-      "description": "Cool colour Plain 35x70",
+      "description": "Cool colour Plain 30x60",
       "hsn": "6304",
-      "rate": 100,
+      "rate": "",
+      "per": "Nos"
+    },
+    {
+      "id": "P006",
+      "description": "Dobby towels",
+      "hsn": "6304",
+      "rate": "",
+      "per": "Nos"
+    },
+    {
+      "id": "P007",
+      "description": "Orange colour",
+      "hsn": "9988",
+      "rate": "",
+      "per": "Nos"
+    },
+    {
+      "id": "P008",
+      "description": "T.Blue colour",
+      "hsn": "9988",
+      "rate": "",
+      "per": "Nos"
+    },
+    {
+      "id": "P009",
+      "description": "Rose colour",
+      "hsn": "9988",
+      "rate": "",
+      "per": "Nos"
+    },
+    {
+      "id": "P010",
+      "description": "R.Blue colour",
+      "hsn": "9988",
+      "rate": "",
+      "per": "Nos"
+    },
+    {
+      "id": "P011",
+      "description": "Ramar colour",
+      "hsn": "9988",
+      "rate": "",
+      "per": "Nos"
+    },
+    {
+      "id": "P012",
+      "description": "Magantha colour",
+      "hsn": "9988",
+      "rate": "",
+      "per": "Nos"
+    },
+    {
+      "id": "P013",
+      "description": "Violet colour",
+      "hsn": "9988",
+      "rate": "",
+      "per": "Nos"
+    },
+    {
+      "id": "P014",
+      "description": "L.Green colour",
+      "hsn": "9988",
+      "rate": "",
+      "per": "Nos"
+    },
+    {
+      "id": "P015",
+      "description": "H.Green colour",
+      "hsn": "9988",
+      "rate": "",
+      "per": "Nos"
+    },
+    {
+      "id": "P016",
+      "description": "Biscuit colour",
+      "hsn": "9988",
+      "rate": "",
+      "per": "Nos"
+    },
+    {
+      "id": "P017",
+      "description": "Kaaki colour",
+      "hsn": "9988",
+      "rate": "",
+      "per": "Nos"
+    },
+    {
+      "id": "P018",
+      "description": "Kaavi colour",
+      "hsn": "9988",
+      "rate": "",
+      "per": "Nos"
+    },
+    {
+      "id": "P019",
+      "description": "Yellow colour",
+      "hsn": "9988",
+      "rate": "",
+      "per": "Nos"
+    },
+    {
+      "id": "P020",
+      "description": "Olive.green colour",
+      "hsn": "9988",
+      "rate": "",
+      "per": "Nos"
+    },
+    {
+      "id": "P021",
+      "description": "Grey colour",
+      "hsn": "9988",
+      "rate": "",
+      "per": "Nos"
+    },
+    {
+      "id": "P022",
+      "description": "Brown colour",
+      "hsn": "9988",
+      "rate": "",
+      "per": "Nos"
+    },
+    {
+      "id": "P023",
+      "description": "Plain colour",
+      "hsn": "9988",
+      "rate": "",
+      "per": "Nos"
+    },
+    {
+      "id": "P024",
+      "description": "Colour",
+      "hsn": "9988",
+      "rate": "",
       "per": "Nos"
     }
   ]
