@@ -131,42 +131,51 @@ app.patch(['/settings', '/api/settings'], async (req, res) => {
   }
 });
 
-// --- PDF & WORD STORAGE ---
-const uploadStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    try {
-      const { date } = req.body;
-      const fy = getFinancialYear(date || new Date().toISOString());
-      const month = getMonthFolderName(date || new Date().toISOString());
-      let dir = path.join(process.cwd(), 'invoices', fy, month);
-      try {
-        fs.mkdirSync(dir, { recursive: true });
-        req.isServerless = false;
-      } catch (mkdirError) {
-        console.warn("Falling back to /tmp directory for PDF storage on serverless environment (Vercel):", mkdirError.message);
-        dir = path.join('/tmp', 'invoices', fy, month);
-        fs.mkdirSync(dir, { recursive: true });
-        req.isServerless = true;
-      }
-      cb(null, dir);
-    } catch (e) {
-      cb(e);
-    }
-  },
-  filename: (req, file, cb) => {
-    const { invoiceNo } = req.body;
-    cb(null, `Bill No ${invoiceNo}.pdf`);
-  }
-});
-const upload = multer({ storage: uploadStorage });
+const upload = multer({ storage: multer.memoryStorage() });
 
 app.post('/api/save-pdf', upload.single('pdf'), (req, res) => {
-  if (!req.file) return res.status(400).send('No file uploaded.');
-  res.json({ 
-    message: req.isServerless ? 'PDF saved in serverless ephemeral storage' : 'PDF saved successfully', 
-    path: req.file.path,
-    isServerless: req.isServerless || false
-  });
+  try {
+    if (!req.file) return res.status(400).send('No file uploaded.');
+
+    const invoiceNo = req.body.invoiceNo || 'Unknown';
+    const invoiceDate = req.body.invoiceDate || req.body.date || new Date().toISOString();
+    const financialYear = req.body.financialYear || getFinancialYear(invoiceDate);
+    const monthFolder = getMonthFolderName(invoiceDate);
+
+    const DEFAULT_DIR = 'D:\\New folder\\billing\\invoices';
+    let saveDir = path.join(
+      DEFAULT_DIR,
+      financialYear,
+      monthFolder
+    );
+    let isServerless = false;
+
+    try {
+      if (!fs.existsSync(saveDir)) {
+        fs.mkdirSync(saveDir, { recursive: true });
+      }
+    } catch (mkdirError) {
+      console.warn("Falling back to /tmp directory for PDF storage on serverless environment (Vercel):", mkdirError.message);
+      saveDir = path.join('/tmp', 'invoices', financialYear, monthFolder);
+      if (!fs.existsSync(saveDir)) {
+        fs.mkdirSync(saveDir, { recursive: true });
+      }
+      isServerless = true;
+    }
+
+    const filePath = path.join(saveDir, `Bill No ${invoiceNo}.pdf`);
+    fs.writeFileSync(filePath, req.file.buffer);
+
+    console.log(`Successfully saved PDF to ${filePath}`);
+    res.json({
+      message: isServerless ? 'PDF saved in serverless ephemeral storage' : 'PDF saved successfully',
+      path: filePath,
+      isServerless: isServerless
+    });
+  } catch (error) {
+    console.error("Error saving PDF:", error);
+    res.status(500).json({ error: 'Failed to save PDF', details: error.message });
+  }
 });
 
 app.post('/api/save-word-report', (req, res) => {

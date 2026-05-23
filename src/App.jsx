@@ -159,7 +159,7 @@ function App() {
         };
 
         // Generate PDF of only the first paper (Original copy)
-        const pdfBlob = await html2pdf().set(opt).from(papers[0]).output('blob');
+        const pdfBlob = await html2pdf().set(opt).from(papers[0]).outputPdf('blob');
         console.log("PDF blob created");
 
         // Restore original styles
@@ -171,7 +171,8 @@ function App() {
         
         console.log("Uploading PDF");
         try {
-          const res = await uploadPDFToServer(pdfBlob, invoiceDetails.invoiceNo, customer.name, invoiceDetails.date);
+          const fy = getFinancialYear(invoiceDetails.date || new Date().toISOString());
+          const res = await uploadPDFToServer(pdfBlob, invoiceDetails.invoiceNo, invoiceDetails.date, fy);
           console.log("PDF saved", res);
           
           if (!isElectron) {

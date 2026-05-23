@@ -96,12 +96,12 @@ export const cancelInvoice = async (id) => {
     }
 };
 
-export const uploadPDFToServer = async (pdfBlob, invoiceNo, customerName, date) => {
+export const uploadPDFToServer = async (pdfBlob, invoiceNo, invoiceDate, financialYear) => {
     try {
         const formData = new FormData();
         formData.append('invoiceNo', invoiceNo);
-        formData.append('customerName', customerName);
-        formData.append('date', date);
+        formData.append('invoiceDate', invoiceDate);
+        formData.append('financialYear', financialYear);
         formData.append('pdf', pdfBlob, `Bill No ${invoiceNo}.pdf`);
 
         const response = await fetch(`${BASE_URL}/api/save-pdf`, {

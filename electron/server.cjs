@@ -34,29 +34,39 @@ const getMonthFolderName = (dateStr) => {
 // In development, invoices are stored locally in the project's ./invoices folder.
 const baseInvoicePath = process.env.INVOICE_STORAGE_PATH || path.join(__dirname, '..', 'invoices');
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const dateStr = req.body.date || new Date().toISOString();
-    const fyFolder = getFinancialYear(dateStr);
-    const monthFolder = getMonthFolderName(dateStr);
-    const dir = path.join(baseInvoicePath, fyFolder, monthFolder);
-    fs.mkdirSync(dir, { recursive: true });
-    cb(null, dir);
-  },
-  filename: (req, file, cb) => {
-    const invoiceNo = req.body.invoiceNo || 'Unknown';
-    cb(null, `Bill No ${invoiceNo}.pdf`);
-  }
-});
-
-const upload = multer({ storage: storage });
+const upload = multer({ storage: multer.memoryStorage() });
 
 app.post('/api/save-pdf', upload.single('pdf'), (req, res) => {
-  if (!req.file) {
-    return res.status(400).send('No PDF file uploaded.');
+  try {
+    if (!req.file) {
+      return res.status(400).send('No PDF file uploaded.');
+    }
+
+    const invoiceNo = req.body.invoiceNo || 'Unknown';
+    const invoiceDate = req.body.invoiceDate || req.body.date || new Date().toISOString();
+    const financialYear = req.body.financialYear || getFinancialYear(invoiceDate);
+    const monthFolder = getMonthFolderName(invoiceDate);
+
+    const DEFAULT_DIR = 'D:\\New folder\\billing\\invoices';
+    const saveDir = path.join(
+       DEFAULT_DIR,
+       financialYear,
+       monthFolder
+    );
+
+    if (!fs.existsSync(saveDir)) {
+      fs.mkdirSync(saveDir, { recursive: true });
+    }
+
+    const filePath = path.join(saveDir, `Bill No ${invoiceNo}.pdf`);
+    fs.writeFileSync(filePath, req.file.buffer);
+
+    console.log(`Successfully saved PDF to ${filePath}`);
+    res.status(200).json({ message: 'PDF saved successfully', path: filePath });
+  } catch (error) {
+    console.error("Error saving PDF:", error);
+    res.status(500).json({ error: 'Failed to save PDF', details: error.message });
   }
-  console.log(`Successfully saved PDF to ${req.file.path}`);
-  res.status(200).json({ message: 'PDF saved successfully', path: req.file.path });
 });
 
 app.post('/api/save-word-report', (req, res) => {
