@@ -217,10 +217,8 @@ function App() {
         console.warn('BroadcastChannel not supported', err);
       }
 
-      // 5. Trigger print prompt (only on Web environment)
-      if (!isElectron) {
-        window.print();
-      }
+      // 5. Trigger print prompt
+      window.print();
 
       // 7. Reset form for new bill
       resetForm();

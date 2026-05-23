@@ -16,7 +16,7 @@ const Header = () => {
                 style={{ top: '12px', left: '24px', width: '90px', height: '100px', mixBlendMode: 'multiply' }}
             >
                 <img
-                    src="/assets/perumal_logo.png"
+                    src="assets/perumal_logo.png"
                     alt="Perumal Logo"
                     style={{ width: '100%', height: '100%', objectFit: 'contain' }}
                 />
