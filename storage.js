@@ -1,11 +1,7 @@
 import fs from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const DB_PATH = path.join(__dirname, 'data');
+const DB_PATH = path.join(process.cwd(), 'data');
 
 // Temporary in-memory cache to handle crash prevention on read-only filesystems (Vercel)
 const memoryCache = {};
@@ -46,7 +42,7 @@ const writeJSON = (file, data) => {
  * Change only the implementation of the functions below.
  * All Express routes and frontend logic will remain completely untouched.
  */
-export const storage = {
+export const storageService = {
   // --- CUSTOMERS ---
   async getCustomers() {
     const db = readJSON('customerdb.json');

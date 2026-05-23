@@ -3,18 +3,14 @@ import cors from 'cors';
 import multer from 'multer';
 import fs from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
-import { storage } from './storage.js';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import { storageService } from './storage.js';
 
 const app = express();
 const port = process.env.PORT || 3002;
 
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
-app.use(express.static(path.join(__dirname, 'dist')));
+app.use(express.static(path.join(process.cwd(), 'dist')));
 
 // Prevent caching for API routes
 app.use((req, res, next) => {
@@ -49,7 +45,7 @@ const getMonthFolderName = (dateStr) => {
 // --- CUSTOMERS API ---
 app.get(['/customers', '/api/customers'], async (req, res) => {
   try {
-    const customers = await storage.getCustomers();
+    const customers = await storageService.getCustomers();
     res.json(customers);
   } catch (e) {
     res.status(500).json({ error: e.message });
@@ -58,7 +54,7 @@ app.get(['/customers', '/api/customers'], async (req, res) => {
 
 app.post(['/customers', '/api/customers'], async (req, res) => {
   try {
-    const customer = await storage.saveCustomer(req.body);
+    const customer = await storageService.saveCustomer(req.body);
     res.status(201).json(customer);
   } catch (e) {
     res.status(500).json({ error: e.message });
@@ -68,7 +64,7 @@ app.post(['/customers', '/api/customers'], async (req, res) => {
 // --- PRODUCTS API ---
 app.get(['/products', '/api/products'], async (req, res) => {
   try {
-    const products = await storage.getProducts();
+    const products = await storageService.getProducts();
     res.json(products);
   } catch (e) {
     res.status(500).json({ error: e.message });
@@ -77,7 +73,7 @@ app.get(['/products', '/api/products'], async (req, res) => {
 
 app.post(['/products', '/api/products'], async (req, res) => {
   try {
-    const product = await storage.saveProduct(req.body);
+    const product = await storageService.saveProduct(req.body);
     res.status(201).json(product);
   } catch (e) {
     res.status(500).json({ error: e.message });
@@ -87,7 +83,7 @@ app.post(['/products', '/api/products'], async (req, res) => {
 // --- INVOICES API ---
 app.get(['/invoices', '/api/invoices'], async (req, res) => {
   try {
-    const invoices = await storage.getInvoices();
+    const invoices = await storageService.getInvoices();
     res.json(invoices);
   } catch (e) {
     res.status(500).json({ error: e.message });
@@ -96,7 +92,7 @@ app.get(['/invoices', '/api/invoices'], async (req, res) => {
 
 app.post(['/invoices', '/api/invoices'], async (req, res) => {
   try {
-    const invoice = await storage.saveInvoice(req.body);
+    const invoice = await storageService.saveInvoice(req.body);
     res.status(201).json(invoice);
   } catch (e) {
     res.status(500).json({ error: e.message });
@@ -105,7 +101,7 @@ app.post(['/invoices', '/api/invoices'], async (req, res) => {
 
 app.patch(['/invoices/:id', '/api/invoices/:id'], async (req, res) => {
   try {
-    const updatedInvoice = await storage.updateInvoice(req.params.id, req.body);
+    const updatedInvoice = await storageService.updateInvoice(req.params.id, req.body);
     res.status(200).json(updatedInvoice);
   } catch (e) {
     if (e.message === 'Invoice not found') {
@@ -119,7 +115,7 @@ app.patch(['/invoices/:id', '/api/invoices/:id'], async (req, res) => {
 // --- SETTINGS API ---
 app.get(['/settings', '/api/settings'], async (req, res) => {
   try {
-    const settings = await storage.getSettings();
+    const settings = await storageService.getSettings();
     res.json(settings);
   } catch (e) {
     res.status(500).json({ error: e.message });
@@ -128,7 +124,7 @@ app.get(['/settings', '/api/settings'], async (req, res) => {
 
 app.patch(['/settings', '/api/settings'], async (req, res) => {
   try {
-    await storage.saveSettings(req.body);
+    await storageService.saveSettings(req.body);
     res.json({ message: 'Settings updated' });
   } catch (e) {
     res.status(500).json({ error: e.message });
@@ -136,13 +132,13 @@ app.patch(['/settings', '/api/settings'], async (req, res) => {
 });
 
 // --- PDF & WORD STORAGE ---
-const storage = multer.diskStorage({
+const uploadStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     try {
       const { date } = req.body;
       const fy = getFinancialYear(date || new Date().toISOString());
       const month = getMonthFolderName(date || new Date().toISOString());
-      let dir = path.join(__dirname, 'invoices', fy, month);
+      let dir = path.join(process.cwd(), 'invoices', fy, month);
       try {
         fs.mkdirSync(dir, { recursive: true });
       } catch (mkdirError) {
@@ -160,7 +156,7 @@ const storage = multer.diskStorage({
     cb(null, `Bill No ${invoiceNo}.pdf`);
   }
 });
-const upload = multer({ storage: storage });
+const upload = multer({ storage: uploadStorage });
 
 app.post('/api/save-pdf', upload.single('pdf'), (req, res) => {
   if (!req.file) return res.status(400).send('No file uploaded.');
@@ -173,7 +169,7 @@ app.post('/api/save-word-report', (req, res) => {
     const wordHtml = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'></head><body>${html}</body></html>`;
     
     const fy = getFinancialYear(new Date().toISOString());
-    let dir = path.join(__dirname, 'invoices', fy, 'Reports');
+    let dir = path.join(process.cwd(), 'invoices', fy, 'Reports');
     let isServerless = false;
     try {
       fs.mkdirSync(dir, { recursive: true });
@@ -204,13 +200,30 @@ app.post('/api/login', (req, res) => {
   }
 });
 
+// --- LIGHTWEIGHT TEST ENDPOINT ---
+app.get('/api/test', (req, res) => {
+  res.json({
+    status: "ok"
+  });
+});
+
 app.get(/^(.*)$/, (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+  try {
+    const filePath = path.join(process.cwd(), 'dist', 'index.html');
+    if (fs.existsSync(filePath)) {
+      res.sendFile(filePath);
+    } else {
+      res.status(404).send('Vite dist assets not found. Ensure production build compiled correctly.');
+    }
+  } catch (error) {
+    console.error("Static file delivery crash:", error);
+    res.status(500).send("Static file delivery error: " + error.message);
+  }
 });
 
 if (!process.env.VERCEL) {
   app.listen(port, () => {
-    console.log(`Local Billing Server running on port ${port}`);
+    console.log(`Server running on ${port}`);
   });
 }
 
