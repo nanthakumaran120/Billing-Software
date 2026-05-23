@@ -141,10 +141,12 @@ const uploadStorage = multer.diskStorage({
       let dir = path.join(process.cwd(), 'invoices', fy, month);
       try {
         fs.mkdirSync(dir, { recursive: true });
+        req.isServerless = false;
       } catch (mkdirError) {
         console.warn("Falling back to /tmp directory for PDF storage on serverless environment (Vercel):", mkdirError.message);
         dir = path.join('/tmp', 'invoices', fy, month);
         fs.mkdirSync(dir, { recursive: true });
+        req.isServerless = true;
       }
       cb(null, dir);
     } catch (e) {
@@ -160,7 +162,11 @@ const upload = multer({ storage: uploadStorage });
 
 app.post('/api/save-pdf', upload.single('pdf'), (req, res) => {
   if (!req.file) return res.status(400).send('No file uploaded.');
-  res.json({ message: 'PDF saved successfully', path: req.file.path });
+  res.json({ 
+    message: req.isServerless ? 'PDF saved in serverless ephemeral storage' : 'PDF saved successfully', 
+    path: req.file.path,
+    isServerless: req.isServerless || false
+  });
 });
 
 app.post('/api/save-word-report', (req, res) => {

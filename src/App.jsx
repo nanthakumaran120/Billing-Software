@@ -135,9 +135,9 @@ function App() {
         console.log(error);
       }
 
-      // 3. Generate PDF and upload to Backend Server (Temporarily disabled/commented out for Vercel deployment)
-      /*
+      // 3. Generate PDF and upload to Backend Server
       try {
+        console.log("PDF generation started");
         const container = document.getElementById('pdf-container');
         const papers = container.querySelectorAll('.invoice-paper');
 
@@ -160,6 +160,7 @@ function App() {
 
         // Generate PDF of only the first paper (Original copy)
         const pdfBlob = await html2pdf().set(opt).from(papers[0]).output('blob');
+        console.log("PDF blob created");
 
         // Restore original styles
         papers.forEach((el, index) => {
@@ -168,12 +169,26 @@ function App() {
           el.style.margin = origStyles[index].margin;
         });
         
-        // Wait for it to save to the designated folder
-        await uploadPDFToServer(pdfBlob, invoiceDetails.invoiceNo, customer.name, invoiceDetails.date);
+        console.log("Uploading PDF");
+        try {
+          const res = await uploadPDFToServer(pdfBlob, invoiceDetails.invoiceNo, customer.name, invoiceDetails.date);
+          console.log("PDF saved", res);
+          
+          // Fallback: If saved in serverless /tmp folder, trigger automated client-side browser download
+          if (res && res.isServerless) {
+            console.log("Serverless Vercel environment detected. Initiating local browser download fallback.");
+            html2pdf().set(opt).from(papers[0]).save();
+          }
+        } catch (uploadError) {
+          console.warn("PDF upload to server failed. Falling back to local browser download:", uploadError);
+          // If server upload throws network exception, automatically trigger direct browser download
+          html2pdf().set(opt).from(papers[0]).save();
+          alert(`Warning: Server PDF storage failed. The invoice PDF has been downloaded directly to your computer instead.`);
+        }
       } catch (pdfError) {
-        console.log("PDF generation/upload failed:", pdfError);
+        console.error("PDF generation crashed:", pdfError);
+        alert(`Error: PDF generation failed: ${pdfError.message}. The invoice was saved, but the PDF could not be created.`);
       }
-      */
 
       // 4. Increment invoice number in settings
       const currentNo = parseInt(invoiceDetails.invoiceNo) || 0;
