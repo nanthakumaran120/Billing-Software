@@ -1,8 +1,14 @@
-const BASE_URL = window.location.origin;
+const isElectron = typeof window !== 'undefined' && 
+  (window.location.protocol === 'file:' || window.navigator.userAgent.toLowerCase().includes('electron'));
 
-const CUSTOMERS_API_URL = BASE_URL;
-const PRODUCTS_API_URL = BASE_URL;
-const INVOICES_API_URL = BASE_URL;
+const API_BASE = isElectron
+  ? "http://localhost:3002"
+  : (import.meta.env.PROD ? "/api" : "");
+
+const CUSTOMERS_API_URL = API_BASE;
+const PRODUCTS_API_URL = API_BASE;
+const INVOICES_API_URL = API_BASE;
+const BASE_URL = isElectron ? "http://localhost:3002" : "";
 
 export const fetchCustomers = async () => {
     const response = await fetch(`${CUSTOMERS_API_URL}/customers?_t=${Date.now()}`);

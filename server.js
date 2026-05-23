@@ -47,7 +47,7 @@ const getMonthFolderName = (dateStr) => {
 };
 
 // --- CUSTOMERS API ---
-app.get('/customers', async (req, res) => {
+app.get(['/customers', '/api/customers'], async (req, res) => {
   try {
     const customers = await storage.getCustomers();
     res.json(customers);
@@ -56,7 +56,7 @@ app.get('/customers', async (req, res) => {
   }
 });
 
-app.post('/customers', async (req, res) => {
+app.post(['/customers', '/api/customers'], async (req, res) => {
   try {
     const customer = await storage.saveCustomer(req.body);
     res.status(201).json(customer);
@@ -66,7 +66,7 @@ app.post('/customers', async (req, res) => {
 });
 
 // --- PRODUCTS API ---
-app.get('/products', async (req, res) => {
+app.get(['/products', '/api/products'], async (req, res) => {
   try {
     const products = await storage.getProducts();
     res.json(products);
@@ -75,7 +75,7 @@ app.get('/products', async (req, res) => {
   }
 });
 
-app.post('/products', async (req, res) => {
+app.post(['/products', '/api/products'], async (req, res) => {
   try {
     const product = await storage.saveProduct(req.body);
     res.status(201).json(product);
@@ -85,7 +85,7 @@ app.post('/products', async (req, res) => {
 });
 
 // --- INVOICES API ---
-app.get('/invoices', async (req, res) => {
+app.get(['/invoices', '/api/invoices'], async (req, res) => {
   try {
     const invoices = await storage.getInvoices();
     res.json(invoices);
@@ -94,7 +94,7 @@ app.get('/invoices', async (req, res) => {
   }
 });
 
-app.post('/invoices', async (req, res) => {
+app.post(['/invoices', '/api/invoices'], async (req, res) => {
   try {
     const invoice = await storage.saveInvoice(req.body);
     res.status(201).json(invoice);
@@ -103,7 +103,7 @@ app.post('/invoices', async (req, res) => {
   }
 });
 
-app.patch('/invoices/:id', async (req, res) => {
+app.patch(['/invoices/:id', '/api/invoices/:id'], async (req, res) => {
   try {
     const updatedInvoice = await storage.updateInvoice(req.params.id, req.body);
     res.status(200).json(updatedInvoice);
@@ -117,7 +117,7 @@ app.patch('/invoices/:id', async (req, res) => {
 });
 
 // --- SETTINGS API ---
-app.get('/settings', async (req, res) => {
+app.get(['/settings', '/api/settings'], async (req, res) => {
   try {
     const settings = await storage.getSettings();
     res.json(settings);
@@ -126,7 +126,7 @@ app.get('/settings', async (req, res) => {
   }
 });
 
-app.patch('/settings', async (req, res) => {
+app.patch(['/settings', '/api/settings'], async (req, res) => {
   try {
     await storage.saveSettings(req.body);
     res.json({ message: 'Settings updated' });
