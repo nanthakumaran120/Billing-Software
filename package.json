@@ -7,8 +7,11 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build && node -e \"const fs=require('fs');let h=fs.readFileSync('dist/index.html','utf8');fs.writeFileSync('dist/index.html',h.replace(/ crossorigin/g,''));\"",
-    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
+    "electron": "electron .",
+    "electron-dev": "concurrently \"npm run dev\" \"wait-on http://localhost:3005 && electron .\"",
+    "dist": "npm run build && electron-builder",
+    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "express-server": "node server.js",
     "server-customers": "json-server --watch data/customerdb.json --port 3001",
     "server-products": "json-server --watch data/productdb.json --port 3003",

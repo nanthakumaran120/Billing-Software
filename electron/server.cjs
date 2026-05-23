@@ -10,6 +10,71 @@ const port = 3002;
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 
+// --- PROXY HELPER FOR JSON-SERVERS ---
+const proxyRequest = async (targetUrl, req, res) => {
+  try {
+    const options = {
+      method: req.method,
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    };
+    
+    if (req.method !== 'GET' && req.method !== 'HEAD') {
+      options.body = JSON.stringify(req.body);
+    }
+    
+    const response = await fetch(targetUrl, options);
+    
+    // Check if the response is JSON
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+      const data = await response.json();
+      res.status(response.status).json(data);
+    } else {
+      const text = await response.text();
+      res.status(response.status).send(text);
+    }
+  } catch (error) {
+    console.error(`Proxy error for ${targetUrl}:`, error.message);
+    res.status(500).json({ error: 'Proxy error', details: error.message });
+  }
+};
+
+// --- AUTH API ---
+app.post('/api/login', (req, res) => {
+  const { username, password } = req.body;
+  if (username === 'admin' && password === 'admin') {
+    res.json({ success: true, message: 'Logged in successfully' });
+  } else {
+    res.status(401).json({ success: false, message: 'Invalid username or password' });
+  }
+});
+
+// --- CUSTOMERS API ---
+app.all(['/customers', '/api/customers'], (req, res) => {
+  proxyRequest(`http://localhost:3001/customers`, req, res);
+});
+
+// --- PRODUCTS API ---
+app.all(['/products', '/api/products'], (req, res) => {
+  proxyRequest(`http://localhost:3003/products`, req, res);
+});
+
+// --- INVOICES API ---
+app.all(['/invoices', '/api/invoices'], (req, res) => {
+  proxyRequest(`http://localhost:3004/invoices`, req, res);
+});
+
+app.all(['/invoices/:id', '/api/invoices/:id'], (req, res) => {
+  proxyRequest(`http://localhost:3004/invoices/${req.params.id}`, req, res);
+});
+
+// --- SETTINGS API ---
+app.all(['/settings', '/api/settings'], (req, res) => {
+  proxyRequest(`http://localhost:3004/settings`, req, res);
+});
+
 const getFinancialYear = (dateStr) => {
   const d = new Date(dateStr);
   const month = d.getMonth() + 1;

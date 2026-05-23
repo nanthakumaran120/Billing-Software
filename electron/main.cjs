@@ -24,8 +24,9 @@ if (!gotTheLock) {
 
     async function createWindow() {
         mainWindow = new BrowserWindow({
-            width: 1280,
-            height: 800,
+            show: false,
+            width: 1400,
+            height: 900,
             title: 'Srinivasa Billing',
             webPreferences: {
                 preload: path.join(__dirname, 'preload.cjs'),
@@ -36,6 +37,10 @@ if (!gotTheLock) {
         });
 
         mainWindow.setMenuBarVisibility(false); // Clean UI
+
+        mainWindow.once('ready-to-show', () => {
+            mainWindow.show();
+        });
 
         try {
             // Wait for all backend servers to be ready before loading the frontend
@@ -54,7 +59,8 @@ if (!gotTheLock) {
             console.error("Timeout waiting for servers to start. Proceeding anyway, but UI may fail.", err);
         }
 
-        if (isDev) {
+        const isDevMode = !app.isPackaged;
+        if (isDevMode) {
             console.log('Running in Development mode');
             mainWindow.loadURL('http://localhost:3005');
             // Open the DevTools.
@@ -62,7 +68,6 @@ if (!gotTheLock) {
         } else {
             console.log('Running in Production mode');
             mainWindow.loadFile(path.join(__dirname, '../dist/index.html'));
-            mainWindow.webContents.openDevTools();
         }
     }
 
