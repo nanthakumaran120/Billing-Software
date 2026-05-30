@@ -5,19 +5,13 @@
   "main": "electron/main.cjs",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "concurrently \"vite\" \"node server.js\"",
     "build": "vite build && node -e \"const fs=require('fs');let h=fs.readFileSync('dist/index.html','utf8');fs.writeFileSync('dist/index.html',h.replace(/ crossorigin/g,''));\"",
-    "preview": "vite preview",
-    "electron": "electron .",
-    "electron-dev": "concurrently \"npm run dev\" \"wait-on http://localhost:3005 && electron .\"",
-    "dist": "npm run build && electron-builder",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview",
     "express-server": "node server.js",
-    "server-customers": "json-server --watch data/customerdb.json --port 3001",
-    "server-products": "json-server --watch data/productdb.json --port 3003",
-    "server-invoices": "json-server --watch data/invoicedb.json --port 3004",
-    "start": "concurrently \"npm run express-server\" \"npm run dev\"",
-    "electron-start": "concurrently \"npm run express-server\" \"npm run dev\" \"wait-on tcp:3005 && cross-env NODE_ENV=development electron .\"",
+    "start": "npm run dev",
+    "electron-start": "concurrently \"npm run dev\" \"wait-on http://localhost:3005 && electron .\"",
     "electron-pack": "npm run build && electron-builder --win --x64"
   },
   "dependencies": {
@@ -25,8 +19,10 @@
     "@radix-ui/react-popover": "^1.1.15",
     "@radix-ui/react-tooltip": "^1.2.8",
     "@supabase/supabase-js": "^2.105.4",
+    "better-sqlite3": "^12.10.0",
     "cors": "^2.8.6",
     "electron-is-dev": "^3.0.1",
+    "electron-store": "^11.0.2",
     "express": "^5.2.1",
     "framer-motion": "^12.38.0",
     "html2pdf.js": "^0.14.0",
@@ -35,7 +31,7 @@
     "multer": "^2.1.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "wait-on": "^8.0.3",
+    "react-window": "^2.2.7",
     "written-number": "^0.11.1"
   },
   "devDependencies": {
@@ -46,7 +42,7 @@
     "autoprefixer": "^10.5.0",
     "concurrently": "^8.2.2",
     "cross-env": "^7.0.3",
-    "electron": "^36.2.1",
+    "electron": "^36.9.5",
     "electron-builder": "^26.8.1",
     "eslint": "^8.56.0",
     "eslint-plugin-react": "^7.33.2",
@@ -54,7 +50,8 @@
     "eslint-plugin-react-refresh": "^0.4.5",
     "postcss": "^8.5.14",
     "tailwindcss": "^4.3.0",
-    "vite": "^7.3.1"
+    "vite": "^7.3.1",
+    "wait-on": "^9.0.10"
   },
   "build": {
     "appId": "com.srinivasa.billing",
@@ -75,22 +72,24 @@
     },
     "files": [
       "dist/**/*",
+      "public/**/*",
       "electron/**/*",
       "node_modules/**/*",
-      "package.json"
+      "package.json",
+      "server.js"
     ],
     "extraResources": [
       {
-        "from": "customerdb.json",
-        "to": "customerdb.json"
+        "from": "data/customerdb.json",
+        "to": "data/customerdb.json"
       },
       {
-        "from": "productdb.json",
-        "to": "productdb.json"
+        "from": "data/productdb.json",
+        "to": "data/productdb.json"
       },
       {
-        "from": "invoicedb.json",
-        "to": "invoicedb.json"
+        "from": "data/invoicedb.json",
+        "to": "data/invoicedb.json"
       }
     ]
   }

@@ -14,24 +14,31 @@ const toWords = (num) => {
 }
 
 const SummarySection = ({ items, customerStateCode }) => {
-    const calculateSubtotal = () => {
-        return items.reduce((acc, item) => acc + (parseFloat(item.amount) || 0), 0);
-    };
-
-    const subtotal = calculateSubtotal();
-    const isIntraState = customerStateCode === '33'; // Tamil Nadu
-
-    // Tax Rates
-    const cgstRate = 0.025;
-    const sgstRate = 0.025;
-    const igstRate = 0.05;
-
-    const cgst = isIntraState ? subtotal * cgstRate : 0;
-    const sgst = isIntraState ? subtotal * sgstRate : 0;
-    const igst = !isIntraState ? subtotal * igstRate : 0;
-
-    const totalTax = cgst + sgst + igst;
-    const totalAmount = Math.round(subtotal + totalTax); // Usually invoices are rounded to nearest rupee
+    const { subtotal, cgst, sgst, igst, totalTax, totalAmount } = React.useMemo(() => {
+        const sub = items.reduce((acc, item) => acc + (parseFloat(item.amount) || 0), 0);
+        const isIntra = customerStateCode === '33';
+        
+        // Tax Rates
+        const cgstRate = 0.025;
+        const sgstRate = 0.025;
+        const igstRate = 0.05;
+        
+        const cgstVal = isIntra ? sub * cgstRate : 0;
+        const sgstVal = isIntra ? sub * sgstRate : 0;
+        const igstVal = !isIntra ? sub * igstRate : 0;
+        
+        const taxTotal = cgstVal + sgstVal + igstVal;
+        const totalAmt = Math.round(sub + taxTotal);
+        
+        return {
+            subtotal: sub,
+            cgst: cgstVal,
+            sgst: sgstVal,
+            igst: igstVal,
+            totalTax: taxTotal,
+            totalAmount: totalAmt
+        };
+    }, [items, customerStateCode]);
 
     const formatCurrency = (amount) => {
         return amount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -84,7 +91,7 @@ const SummarySection = ({ items, customerStateCode }) => {
                                 <td className="border-b border-gray-400 p-1 px-2 text-right">{formatCurrency(subtotal)}</td>
                             </tr>
 
-                            {isIntraState ? (
+                            {customerStateCode === '33' ? (
                                 <>
                                     <tr>
                                         <td className="border-b border-gray-400 p-1 px-2 text-gray-600">Add CGST 2.5 %</td>
@@ -141,4 +148,4 @@ const SummarySection = ({ items, customerStateCode }) => {
     );
 };
 
-export default SummarySection;
+export default React.memo(SummarySection);

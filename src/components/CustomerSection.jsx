@@ -25,6 +25,7 @@ const CustomerSection = ({ customer, setCustomer, invoiceDetails, setInvoiceDeta
     const loadCustomerData = async () => {
         try {
             const customers = await fetchCustomers();
+            console.log("Customers loaded:", customers);
             setSavedCustomers(customers || []);
         } catch (e) {
             console.error("Failed to load customers", e);
@@ -104,10 +105,10 @@ const CustomerSection = ({ customer, setCustomer, invoiceDetails, setInvoiceDeta
     return (
         <div className="flex flex-col text-sm font-semibold border-b border-gray-400">
             
-            {/* Top row: Invoice No, Date, State */}
+            {/* Top row: Order No, Date, State */}
             <div className="flex flex-row w-full border-b border-blue-900 bg-gray-50 print:bg-transparent">
                <div className="w-1/3 flex items-center border-r border-blue-900 p-3">
-                   <label className="mr-2 whitespace-nowrap text-gray-800 text-xs font-bold uppercase">Invoice No. :</label>
+                   <label className="mr-2 whitespace-nowrap text-gray-800 text-xs font-bold uppercase">Order No. :</label>
                    <input
                         type="text"
                          className="font-bold flex-1 text-xl text-blue-900 p-0 bg-transparent"
@@ -301,4 +302,4 @@ const CustomerSection = ({ customer, setCustomer, invoiceDetails, setInvoiceDeta
     );
 };
 
-export default CustomerSection;
+export default React.memo(CustomerSection);

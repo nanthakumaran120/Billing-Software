@@ -306,4 +306,4 @@ const ProductTable = ({ items, setItems, isPreviewMode }) => {
     );
 };
 
-export default ProductTable;
+export default React.memo(ProductTable);

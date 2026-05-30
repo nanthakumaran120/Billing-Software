@@ -1,14 +1,10 @@
-export const isElectron = typeof window !== 'undefined' && 
-  (window.location.protocol === 'file:' || window.navigator.userAgent.toLowerCase().includes('electron'));
+const BASE_URL = window.location.origin.startsWith('file://') || window.location.origin === 'null'
+    ? 'http://localhost:3002'
+    : window.location.origin;
 
-const API_BASE = isElectron
-  ? "http://localhost:3002"
-  : (import.meta.env.PROD ? "/api" : "");
-
-const CUSTOMERS_API_URL = API_BASE;
-const PRODUCTS_API_URL = API_BASE;
-const INVOICES_API_URL = API_BASE;
-const BASE_URL = isElectron ? "http://localhost:3002" : "";
+const CUSTOMERS_API_URL = BASE_URL;
+const PRODUCTS_API_URL = BASE_URL;
+const INVOICES_API_URL = BASE_URL;
 
 export const fetchCustomers = async () => {
     const response = await fetch(`${CUSTOMERS_API_URL}/customers?_t=${Date.now()}`);
@@ -96,12 +92,12 @@ export const cancelInvoice = async (id) => {
     }
 };
 
-export const uploadPDFToServer = async (pdfBlob, invoiceNo, invoiceDate, financialYear) => {
+export const uploadPDFToServer = async (pdfBlob, invoiceNo, customerName, date) => {
     try {
         const formData = new FormData();
         formData.append('invoiceNo', invoiceNo);
-        formData.append('invoiceDate', invoiceDate);
-        formData.append('financialYear', financialYear);
+        formData.append('customerName', customerName);
+        formData.append('date', date);
         formData.append('pdf', pdfBlob, `Bill No ${invoiceNo}.pdf`);
 
         const response = await fetch(`${BASE_URL}/api/save-pdf`, {

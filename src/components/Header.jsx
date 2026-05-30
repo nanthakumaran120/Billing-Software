@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { PhoneCall } from 'lucide-react';
 
 const DeskPhoneIcon = ({ size = 10, className = '' }) => (
@@ -8,6 +8,21 @@ const DeskPhoneIcon = ({ size = 10, className = '' }) => (
 );
 
 const Header = () => {
+    const [logo, setLogo] = useState("/assets/perumal_logo.png");
+
+    useEffect(() => {
+        if (window.electron && window.electron.getLogoPath) {
+            try {
+                const path = window.electron.getLogoPath();
+                if (path) {
+                    setLogo(path);
+                }
+            } catch (err) {
+                console.error("Failed to fetch logo path:", err);
+            }
+        }
+    }, []);
+
     return (
         <header className="flex flex-col relative w-full">
             {/* Perumal Logo */}
@@ -16,7 +31,7 @@ const Header = () => {
                 style={{ top: '12px', left: '24px', width: '90px', height: '100px', mixBlendMode: 'multiply' }}
             >
                 <img
-                    src="assets/perumal_logo.png"
+                    src={logo}
                     alt="Perumal Logo"
                     style={{ width: '100%', height: '100%', objectFit: 'contain' }}
                 />
@@ -44,7 +59,7 @@ const Header = () => {
             </div>
 
             <div className="text-center pt-2 pb-2">
-                <h3 className="text-xs font-bold uppercase text-gray-500 mb-1">Tax Invoice / Labour Receipt</h3>
+                <h3 className="text-xs font-bold uppercase text-gray-500 mb-1">Order / Labour Receipt</h3>
                 <h1 className="text-4xl font-bold text-blue-600 mb-1">SRINIVASA DYEING</h1>
                 <p className="font-bold text-gray-600 uppercase text-xs tracking-widest">Dyeing & Cloth Merchant</p>
                 <div className="font-bold mt-2 text-gray-800 uppercase tracking-widest text-sm">

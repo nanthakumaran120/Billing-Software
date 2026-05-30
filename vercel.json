@@ -1,10 +1,5 @@
 {
   "version": 2,
-  "functions": {
-    "api/index.js": {
-      "includeFiles": "data/**"
-    }
-  },
   "rewrites": [
     {
       "source": "/(customers|products|invoices|settings|api)(.*)",

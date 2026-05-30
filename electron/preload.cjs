@@ -1,6 +1,10 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
-contextBridge.exposeInMainWorld('electronAPI', {
-    // You can add IPC channels here to communicate between React and Electron if needed in the future
-    // e.g., getAppVersion: () => ipcRenderer.invoke('get-app-version')
+contextBridge.exposeInMainWorld('electron', {
+    getPrinters: () => ipcRenderer.invoke('get-printers'),
+    printPDF: (options) => ipcRenderer.invoke('print-pdf', options),
+    printInvoice: (options) => ipcRenderer.invoke('print-invoice', options),
+    showSaveDialog: (options) => ipcRenderer.invoke('show-save-dialog', options),
+    savePDFFile: (filePath, buffer) => ipcRenderer.invoke('save-pdf-file', filePath, buffer),
+    getLogoPath: () => ipcRenderer.sendSync('get-logo-path')
 });

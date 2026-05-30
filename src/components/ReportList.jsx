@@ -25,12 +25,16 @@ const ReportList = ({ onBack }) => {
         window.addEventListener('focus', loadData);
         const interval = setInterval(loadData, 15000); // 15s for reports
         
-        // Instant sync across tabs
+        // Instant sync: listen for new invoices broadcast from App.jsx
         let channel;
         try {
             channel = new BroadcastChannel('invoice_updates');
             channel.onmessage = (event) => {
-                if (event.data === 'new_invoice') {
+                // Accept both structured { type: 'NEW_INVOICE' } and legacy string 'new_invoice'
+                const isNew =
+                    (event.data && event.data.type === 'NEW_INVOICE') ||
+                    event.data === 'new_invoice';
+                if (isNew) {
                     loadData();
                 }
             };
@@ -132,9 +136,9 @@ const ReportList = ({ onBack }) => {
             
             <div className="action-bar no-print flex justify-between items-center mb-4 bg-white p-4 rounded shadow">
                 <button onClick={onBack} className="btn-secondary flex items-center gap-2">
-                    <ArrowLeft size={18} /> Back to Bill Generation
+                    <ArrowLeft size={18} /> Back to Order Generation
                 </button>
-                <h2 className="text-xl font-bold text-gray-800">Generated Bills Report</h2>
+                <h2 className="text-xl font-bold text-gray-800">Generated Orders Report</h2>
                 <div className="flex gap-2">
                     <button onClick={handleSaveWord} className="btn-secondary flex items-center gap-2 text-blue-700 border-blue-700 hover:bg-blue-50">
                         <Save size={18} /> Save to Folder (Word)
@@ -157,7 +161,7 @@ const ReportList = ({ onBack }) => {
                         <div>
                             <h2 className="text-xl font-bold uppercase text-gray-900">GST REPORT</h2>
                             <p className="text-sm font-semibold text-gray-600 mt-1">
-                                {selectedMonth === 'All' ? 'Complete Statement - All Invoices' : `Statement for the month of: ${selectedMonth}`}
+                                {selectedMonth === 'All' ? 'Complete Statement - All Orders' : `Statement for the month of: ${selectedMonth}`}
                             </p>
                         </div>
                         <div className="text-right text-xs font-semibold text-gray-600">
@@ -188,21 +192,21 @@ const ReportList = ({ onBack }) => {
                 <table className="report-table w-full text-xs text-left border-collapse border border-gray-400">
                     <thead className="table-header bg-gray-100">
                         <tr>
-                            <th className="border border-gray-400 p-2 font-bold text-gray-800 text-center w-20">Invoice No</th>
+                            <th className="border border-gray-400 p-2 font-bold text-gray-800 text-center w-20">Order No</th>
                             <th className="border border-gray-400 p-2 font-bold text-gray-800">GSTIN of supplier/buyer</th>
                             <th className="border border-gray-400 p-2 font-bold text-gray-800">Trade/Legal name</th>
-                            <th className="border border-gray-400 p-2 font-bold text-gray-800 text-center">Invoice Date</th>
+                            <th className="border border-gray-400 p-2 font-bold text-gray-800 text-center">Order Date</th>
                             <th className="border border-gray-400 p-2 font-bold text-gray-800 text-right">Taxable Value (₹)</th>
                             <th className="border border-gray-400 p-2 font-bold text-gray-800 text-right">Central Tax (₹)</th>
                             <th className="border border-gray-400 p-2 font-bold text-gray-800 text-right">State/UT Tax (₹)</th>
                             <th className="border border-gray-400 p-2 font-bold text-gray-800 text-right">IGST (₹)</th>
-                            <th className="border border-gray-400 p-2 font-bold text-gray-800 text-right">Invoice Value (₹)</th>
+                            <th className="border border-gray-400 p-2 font-bold text-gray-800 text-right">Order Value (₹)</th>
                         </tr>
                     </thead>
                     <tbody>
                         {filteredInvoices.length === 0 ? (
                             <tr>
-                                <td colSpan="9" className="border border-gray-400 p-4 text-center text-gray-500">No invoices found.</td>
+                                <td colSpan="9" className="border border-gray-400 p-4 text-center text-gray-500">No orders found.</td>
                             </tr>
                         ) : (
                             filteredInvoices.map((inv, index) => {

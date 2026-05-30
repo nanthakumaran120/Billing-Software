@@ -14,7 +14,7 @@ const CancelBill = ({ onBack }) => {
         setFoundInvoice(null);
         
         if (!searchNo || !searchDate) {
-            setError('Please enter both Bill Number and Billing Date.');
+            setError('Please enter both Order Number and Order Date.');
             return;
         }
 
@@ -28,10 +28,10 @@ const CancelBill = ({ onBack }) => {
             if (invoice) {
                 setFoundInvoice(invoice);
             } else {
-                setError('No bill found matching these details.');
+                setError('No order found matching these details.');
             }
         } catch (err) {
-            setError('Failed to fetch bills. Check server connection.');
+            setError('Failed to fetch orders. Check server connection.');
         }
     };
 
@@ -39,15 +39,15 @@ const CancelBill = ({ onBack }) => {
         if (!foundInvoice) return;
         
         if (foundInvoice.status === 'cancelled') {
-            alert('This bill is already cancelled!');
+            alert('This order is already cancelled!');
             return;
         }
 
-        if (window.confirm(`Are you absolutely sure you want to CANCEL Bill No ${foundInvoice.invoiceDetails?.invoiceNo}? This cannot be easily undone.`)) {
+        if (window.confirm(`Are you absolutely sure you want to CANCEL Order No ${foundInvoice.invoiceDetails?.invoiceNo}? This cannot be easily undone.`)) {
             setIsCancelling(true);
             try {
                 await cancelInvoice(foundInvoice.id);
-                alert(`Bill No ${foundInvoice.invoiceDetails?.invoiceNo} has been successfully cancelled.`);
+                alert(`Order No ${foundInvoice.invoiceDetails?.invoiceNo} has been successfully cancelled.`);
                 // Notify other tabs
                 try {
                     const channel = new BroadcastChannel('invoice_updates');
@@ -60,7 +60,7 @@ const CancelBill = ({ onBack }) => {
                 // Update local state to reflect cancellation immediately
                 setFoundInvoice(prev => ({ ...prev, status: 'cancelled' }));
             } catch (err) {
-                alert('Failed to cancel bill. Please try again.');
+                alert('Failed to cancel order. Please try again.');
             } finally {
                 setIsCancelling(false);
             }
@@ -77,27 +77,27 @@ const CancelBill = ({ onBack }) => {
             <div className="w-full max-w-4xl mx-auto">
                 <div className="action-bar no-print flex justify-between items-center mb-6">
                     <button onClick={onBack} className="btn-secondary flex items-center gap-2">
-                        <ArrowLeft size={18} /> Back to Invoice
+                        <ArrowLeft size={18} /> Back to Order
                     </button>
-                    <h2 className="text-xl font-bold text-gray-800">Cancel a Generated Bill</h2>
+                    <h2 className="text-xl font-bold text-gray-800">Cancel a Generated Order</h2>
                     <div style={{ width: '130px' }}></div> {/* spacer for centering */}
                 </div>
 
                 <div className="bg-white rounded-lg shadow-lg p-6 mb-6 border border-gray-200">
-                    <h3 className="text-lg font-bold text-gray-700 mb-4 border-b pb-2">Search Bill Details</h3>
+                    <h3 className="text-lg font-bold text-gray-700 mb-4 border-b pb-2">Search Order Details</h3>
                     <div className="flex flex-col md:flex-row gap-4 items-end">
                         <div className="flex-1">
-                            <label className="block text-sm font-bold text-gray-700 mb-1">Bill Number</label>
+                            <label className="block text-sm font-bold text-gray-700 mb-1">Order Number</label>
                             <input 
                                 type="number" 
                                 className="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-blue-500"
-                                placeholder="Enter Bill No"
+                                placeholder="Enter Order No"
                                 value={searchNo}
                                 onChange={(e) => setSearchNo(e.target.value)}
                             />
                         </div>
                         <div className="flex-1">
-                            <label className="block text-sm font-bold text-gray-700 mb-1">Billing Date</label>
+                            <label className="block text-sm font-bold text-gray-700 mb-1">Order Date</label>
                             <input 
                                 type="date" 
                                 className="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-blue-500"
@@ -110,7 +110,7 @@ const CancelBill = ({ onBack }) => {
                                 onClick={handleSearch}
                                 className="btn-primary flex items-center gap-2 py-2 px-6"
                             >
-                                <Search size={18} /> Find Bill
+                                <Search size={18} /> Find Order
                             </button>
                         </div>
                     </div>
@@ -121,7 +121,7 @@ const CancelBill = ({ onBack }) => {
                     <div className={`bg-white rounded-lg shadow-lg p-6 border ${foundInvoice.status === 'cancelled' ? 'border-red-400 bg-red-50' : 'border-gray-200'}`}>
                         <div className="flex justify-between items-start border-b pb-4 mb-4">
                             <div>
-                                <h3 className="text-2xl font-extrabold text-gray-800">Bill No: {foundInvoice.invoiceDetails?.invoiceNo}</h3>
+                                <h3 className="text-2xl font-extrabold text-gray-800">Order No: {foundInvoice.invoiceDetails?.invoiceNo}</h3>
                                 <p className="text-gray-600 font-medium">Date: {foundInvoice.invoiceDetails?.date}</p>
                             </div>
                             {foundInvoice.status === 'cancelled' && (
@@ -139,7 +139,7 @@ const CancelBill = ({ onBack }) => {
                                 <p className="text-gray-600 font-medium mt-1">GSTIN: {foundInvoice.customer?.gstin}</p>
                             </div>
                             <div className="text-right">
-                                <h4 className="text-sm font-bold text-gray-500 uppercase mb-1">Bill Summary</h4>
+                                <h4 className="text-sm font-bold text-gray-500 uppercase mb-1">Order Summary</h4>
                                 <p className="text-gray-600">Total Items: <span className="font-bold text-gray-800">{foundInvoice.items?.length || 0}</span></p>
                                 <p className="text-gray-600 mt-2">Gross Amount:</p>
                                 <p className="text-3xl font-extrabold text-blue-700">₹ {calculateTotal(foundInvoice.items).toFixed(2)}</p>
@@ -154,10 +154,10 @@ const CancelBill = ({ onBack }) => {
                                     className="btn-danger-solid py-3 px-8 text-lg flex items-center gap-2 shadow-lg hover:shadow-xl transition-all"
                                 >
                                     <XCircle size={24} /> 
-                                    {isCancelling ? 'Cancelling...' : 'Void / Cancel This Bill'}
+                                    {isCancelling ? 'Cancelling...' : 'Void / Cancel This Order'}
                                 </button>
                             ) : (
-                                <p className="text-red-600 font-bold italic">This bill has already been cancelled.</p>
+                                <p className="text-red-600 font-bold italic">This order has already been cancelled.</p>
                             )}
                         </div>
                     </div>
@@ -167,4 +167,4 @@ const CancelBill = ({ onBack }) => {
     );
 };
 
-export default CancelBill;
+export default React.memo(CancelBill);
